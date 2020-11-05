@@ -2,6 +2,8 @@
 #include <stdlib.h>
 
 int W_win = 400, H_win = 250;
+int scores = 0, playtime = 0;
+bool life = true;
 
 class Player{
 	public:
@@ -45,15 +47,16 @@ class Player{
 	}
 
 	void Collision(int dir){
-		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++)						// Проход по строкам кратным размеру 1 тайла
-			for (int j=rect.left/16; j<(rect.left+rect.width)/16; j++){					// ... по столбцам ...
-				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || 					// Если объект столкновения == ...
-					TileMap[i][j] == 'T' || TileMap[i][j] == 'k' || 
-					TileMap[i][j] == 'r' || TileMap[i][j] == 't' || TileMap[i][j] == 'c'){
-					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }			// Если ГГ слева от объекта столкновения
-					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }					// Если ГГ справа
+		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++)							// Проход по строкам кратным размеру 1 тайла
+			for (int j=rect.left/16; j<(rect.left+rect.width)/16; j++){						// ... по столбцам ...
+				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || TileMap[i][j] == 'R' || // Если объект столкновения == ...
+					TileMap[i][j] == 'T' || TileMap[i][j] == 'k' || TileMap[i][j] == 'p' ||
+					TileMap[i][j] == 'r' || TileMap[i][j] == 't' || TileMap[i][j] == 'c' ||
+					TileMap[i][j] == 'K' || TileMap[i][j] == 'q'){
+					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }				// Если ГГ слева от объекта столкновения
+					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }						// Если ГГ справа
 					if ((dy>0) && (dir == 1)){ rect.top = i*16 - rect.height; dy=0; onGround = true; }	// Если ГГ сверху
-					if ((dy<0) && (dir == 1)){ 											// Если ГГ снизу
+					if ((dy<0) && (dir == 1)){ 												// Если ГГ снизу
 						// Обработка [?]
 						if (TileMap[i][j] == 'c'){
 							TileMap[i][j] = ' '; 		// Убираем [?] с карты
@@ -61,7 +64,7 @@ class Player{
 							sprite.setOrigin(8,8);		// устанавливаем геом. центр ГГ
 							mode = true;				// вкл. модификатор
 						}
-						if(TileMap[i][j] == 'k'){ TileMap[i][j] = ' '; } // Убираем блок с карты
+						if(TileMap[i][j] == 'k' || TileMap[i][j] == 'K'){ TileMap[i][j] = ' '; } // Убираем блок с карты
 						
 						rect.top = i*16 + 16; dy=0; 
 						}
@@ -120,10 +123,8 @@ int main(){
 	Texture tileset;
 	tileset.loadFromFile("Images/Mario_tileset.png");
 
-	Texture map;
-	map.loadFromFile("Images/Mario_tileset.png");
 	Sprite s_map;
-	s_map.setTexture(map);
+	s_map.setTexture(tileset);
 
 // Создаем классы героя, врагов
 	Player p(tileset);
@@ -148,6 +149,10 @@ int main(){
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		time = time/800;
+
+	// Выбор уровня
+		// if(lvl == 1){ TileMap[H] = TileMap1[H]; }
+		// if(lvl == 2){ TileMap[H] = TileMap2[H]; }
 
 	// Большой Марио - [?]
 		if (p.mode){
@@ -190,23 +195,37 @@ int main(){
 		if (p.rect.left > 2180) { offsetX = W_win+1800 - 200; }		// В конце
 		// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
 
-		window.clear(Color(107,140,255));							// Цвет неба
-
+	// Цвет фона
+		if(lvl == 1 || lvl == 3) { window.clear(Color(107,140,255)); }
+		if(lvl == 2) { window.clear(Color(0,0,0)); }
+		
 // ====================== ОТРИСОВКА КАРТЫ ======================
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++){
+				s_map.setColor(Color(255, 255, 255));
+				s_map.setRotation(0);
 				if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }			// Земля
+				if (TileMap[i][j]=='p'){ s_map.setTextureRect( IntRect(143-16*3,112+16,16,16) ); }		// подземелье
 				if (TileMap[i][j]=='i'){ s_map.setTextureRect( IntRect(0,17,14,20) ); }					// Монеты
 				if (TileMap[i][j]=='k'){ s_map.setTextureRect( IntRect(143,112,16,16) ); }				// Красный кирпич
+				if (TileMap[i][j]=='K'){ s_map.setTextureRect( IntRect(143,112+16,16,16) ); }			// Синий кирпич
 				if (TileMap[i][j]=='c'){ s_map.setTextureRect( IntRect(143-16,112,16,16) ); }			// [?]
-				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// Т -обр. труба
-				if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
 				if (TileMap[i][j]=='g'){ s_map.setTextureRect( IntRect(0,16*9-5,3*16,16*2+5) ); }		// Фон. гора зелени
 				if (TileMap[i][j]=='d'){ s_map.setTextureRect( IntRect(0,106,74,127-106) ); }			// Куст
 				if (TileMap[i][j]=='w'){ s_map.setTextureRect( IntRect(99,224,140-99,255-224) ); }		// Облако
 				if (TileMap[i][j]=='r'){ s_map.setTextureRect( IntRect(143-32,112,16,16) ); }			// Красный блок
+				if (TileMap[i][j]=='R'){ s_map.setTextureRect( IntRect(143-32,112+16,16,16) ); }		// Синий блок
 				if (TileMap[i][j]=='U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }				// Замок
+				if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
+				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// T -обр. труба
 				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
+				if (TileMap[i][j]=='q'){ s_map.setTextureRect( IntRect(0,177,77,32) ); }				// -| обр. труба
+				if (TileMap[i][j]=='1'){ 																// 1-ый блок
+					s_map.setTextureRect(IntRect(143-32,112+16,16,16));
+					s_map.setColor(Color(255, 0, 0)); }		
+				if (TileMap[i][j]=='2'){ 																// 2-ой блок
+					s_map.setTextureRect( IntRect(143-32,112+16,16,16));
+					s_map.setColor(Color(0, 0, 255)); }		
 
 				s_map.setPosition(j*16 - offsetX, i*16 - offsetY);
 				window.draw(s_map);
@@ -227,4 +246,8 @@ int main(){
 	4) жизненный цикл
 	\/ 5) коллизия со всеми видами 
 	\/ 6) камера в конце карты
+	7) Выбор уровня
+	8) Правильная коллизия большого Марио
+	9) HUD(жизни, время, очки)
+	10) личные блоки (1,2)
 */ 

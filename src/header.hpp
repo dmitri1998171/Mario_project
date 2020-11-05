@@ -2,7 +2,8 @@
 #include <SFML/Audio.hpp>
 
 const int H = 17, W = 150;          // Размеры карты
-float offsetX = 0, offsetY = 0;     // смещение для тайлсета
+float offsetX = 0, offsetY = 0;     // Смещение для тайлсета
+int lvl = 1;                        // Текущий уровень
 
 using namespace sf;
 
@@ -28,7 +29,7 @@ String TileMapB[H] = {
 }; 
 
 // Уровень 1
-String TileMap[H] = {
+String TileMap1[H] = {
 "00000000000000000000000000000000000000000000000000000000                                   00000000000000000000000000000000000000000000000000000000000",
 "0                                                                          w  i                                                                      0",
 "0                                                                           i i i    w                                                   w           0",
@@ -48,8 +49,30 @@ String TileMap[H] = {
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 }; 
 
+
 // Уровень 2
-String TileMap2[H] = {
+String TileMap[H] = {
+"KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKT0KK",
+"KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKT0KK",
+"0                                                                                       K                                                         T0KK",
+"0                                                                                       Ki                                                        T0KK",
+"0                                                                                       Kii            p                     K                    T0KK",
+"0                                                                                       KKKKi           R        KKK    K  KK                     T0KK",
+"0                                                                                       K iKKKK          RRR       K   K K K                      T0KK",
+"0                                                                       R              K      K             KKK    K  K i KK                      T0KK",
+"0                                                                      RR              K      K             KKK  K  KK iii                        T0KK",
+"0                                                                     RiR      2       K  iiiiK                 KK      i  K                      T0KK",
+"0                          iiii         2  2  2  2                   RRiR               K KKKKKR         K   KKKKKKK   KpRKKK                     T0KK",
+"0                        KiKKKKiK                                   RRiiR               K               KKK  KKKpppppppppp                        T0KK",
+"0          KcKcK         KKK  KKK                                  RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
+"0                                                                 RRRRi 1                              KKKKKKKKKKKKKKKKKKKKK                      T0KK",
+"pppppppppppppppppppppppppppppppppppppppp  1  1  1  ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+"pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+"pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
+}; 
+
+// Уровень 3
+String TileMap3[H] = {
 "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
 "0                                                                                                                                                    0",
 "0                                                                                    w                                                   w           0",
