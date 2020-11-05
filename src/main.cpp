@@ -1,4 +1,7 @@
 #include "header.hpp"
+#include <stdlib.h>
+
+int W_win = 400, H_win = 250;
 
 class Player{
 	public:
@@ -22,14 +25,16 @@ class Player{
 	}
 
 	void update(float time){
-		rect.left += dx * time;
-		Collision(0);
+		rect.left += dx * time;		// Движение по формуле: "скорость, время, растояние"
+		Collision(0);				// Вызов функции рассчета столкновений
 
+	// Механика прыжка по параболе
 		if (!onGround){ dy = dy + 0.0015*time; }
 		rect.top += dy * time;
 		onGround = false;
 		Collision(1);
 
+	// Анимация - смена тайлов
 		CurrentFrame += 0.005*time; 
 		if (CurrentFrame > 3){ CurrentFrame -=3; }
 		if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,144,-16,16)); }
@@ -40,19 +45,26 @@ class Player{
 	}
 
 	void Collision(int dir){
-		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++)
-			for (int j=rect.left/16; j<(rect.left+rect.width)/16; j++){
-				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || TileMap[i][j] == 'k' || TileMap[i][j] == 'r' || TileMap[i][j] == 't'){
-					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }
-					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }
-					if ((dy>0) && (dir == 1)){ rect.top = i*16 - rect.height; dy=0; onGround = true; }
-					if ((dy<0) && (dir == 1)){ rect.top = i*16 + 16; dy=0; }
-				}
-				if (TileMap[i][j] == 'c'){
-					TileMap[i][j] = ' '; 
-					sprite.setScale(2,2);
-					sprite.setOrigin(8,8);
-					mode = true;
+		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++)						// Проход по строкам кратным размеру 1 тайла
+			for (int j=rect.left/16; j<(rect.left+rect.width)/16; j++){					// ... по столбцам ...
+				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || 					// Если объект столкновения == ...
+					TileMap[i][j] == 'T' || TileMap[i][j] == 'k' || 
+					TileMap[i][j] == 'r' || TileMap[i][j] == 't' || TileMap[i][j] == 'c'){
+					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }			// Если ГГ слева от объекта столкновения
+					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }					// Если ГГ справа
+					if ((dy>0) && (dir == 1)){ rect.top = i*16 - rect.height; dy=0; onGround = true; }	// Если ГГ сверху
+					if ((dy<0) && (dir == 1)){ 											// Если ГГ снизу
+						// Обработка [?]
+						if (TileMap[i][j] == 'c'){
+							TileMap[i][j] = ' '; 		// Убираем [?] с карты
+							sprite.setScale(2,2);		// Маштабируем ГГ в х2
+							sprite.setOrigin(8,8);		// устанавливаем геом. центр ГГ
+							mode = true;				// вкл. модификатор
+						}
+						if(TileMap[i][j] == 'k'){ TileMap[i][j] = ' '; } // Убираем блок с карты
+						
+						rect.top = i*16 + 16; dy=0; 
+						}
 				}
 			}
 	}
@@ -100,23 +112,25 @@ class Enemy{
 };
 
 int main(){
-	RenderWindow window(VideoMode(400,250),"SFML WINDOW");
+	RenderWindow window(VideoMode(W_win, H_win),"SFML WINDOW");
 
 	float CurrentFrame = 0;
 	Clock clock;
-
+// Загрузка ресурсов
 	Texture tileset;
 	tileset.loadFromFile("Images/Mario_tileset.png");
-
-	Player p(tileset);
-	Enemy enemy;
-	enemy.set(tileset,48*16,208);
 
 	Texture map;
 	map.loadFromFile("Images/Mario_tileset.png");
 	Sprite s_map;
 	s_map.setTexture(map);
 
+// Создаем классы героя, врагов
+	Player p(tileset);
+	Enemy enemy;
+	enemy.set(tileset,48*16,208);
+
+// ====================== Загрузка аудио ======================
 	SoundBuffer buffer;
 	buffer.loadFromFile("Audio/Jump.ogg");
 	Sound sound(buffer);
@@ -124,16 +138,20 @@ int main(){
 
 	Music music;
 	music.openFromFile("Audio/Mario_Theme.ogg");
-	music.play();
 	music.setVolume(10);
+// =============================================================
 
 	while (window.isOpen()){
+		// music.play();
+		Event event;
+		
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		time = time/800;
 
+	// Большой Марио - [?]
 		if (p.mode){
-		p.Timer1 += time;
+			p.Timer1 += time;
 			if (p.Timer1>5000){
 			p.sprite.setScale(1,1);
 			p.sprite.setOrigin(0,0);
@@ -141,66 +159,59 @@ int main(){
 			p.mode = false;
 			}
 		}
-
-		Event event;
 		
 		while (window.pollEvent(event)){
-			if (event.type == Event::Closed) window.close();
-		}
+			if (event.type == Event::Closed) window.close(); }
 
-		if (Keyboard::isKeyPressed(Keyboard::Escape)){ window.close(); }
-
-		if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }
-
-		if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }
-		
-		if (Keyboard::isKeyPressed(Keyboard::Up)){ 
+	// Управление персонажем
+		if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
+		if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
+		if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
 			if (p.onGround){
-				if (!p.mode){ p.dy = -0.5; p.onGround = false; sound.play(); } 
-				if (p.mode){ p.dy = -0.7; p.onGround = false; sound.play(); }
+				if (!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
+				if (p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
 			}
 		}
+		if (Keyboard::isKeyPressed(Keyboard::Escape)){ window.close(); }			// Пауза
 
 		p.update(time);
 		enemy.update(time);
 
+	// Проверка столкновения ГГ и врага
 		if (p.rect.intersects(enemy.rect)){
 			if (enemy.life){
-				if (p.dy>0) { enemy.dx=0; p.dy=-0.2; enemy.life = false; }
-				else { p.sprite.setColor(Color::Red); }
+				if (p.dy>0) { enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага
+				else { p.sprite.setColor(Color::Red); }						// Умер ГГ
 			}
 		}
 
-		if (p.rect.left>200) { offsetX = p.rect.left - 200; }
-		window.clear(Color(107,140,255));
+	// Управление камерой
+		if (p.rect.left > 200) { offsetX = p.rect.left - 200; }		// В начале карты
+		if (p.rect.left > 2180) { offsetX = W_win+1800 - 200; }		// В конце
+		// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
 
+		window.clear(Color(107,140,255));							// Цвет неба
+
+// ====================== ОТРИСОВКА КАРТЫ ======================
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++){
-				if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }
-
-				if (TileMap[i][j]=='k'){ s_map.setTextureRect( IntRect(143,112,16,16) ); }
-												
-				if (TileMap[i][j]=='c'){ s_map.setTextureRect( IntRect(143-16,112,16,16) ); }
-
-				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }
-
-				if (TileMap[i][j]=='g'){ s_map.setTextureRect( IntRect(0,16*9-5,3*16,16*2+5) ); }
-
-				if (TileMap[i][j]=='G'){ s_map.setTextureRect( IntRect(145,222,222-145,255-222) ); }
-
-				if (TileMap[i][j]=='d'){ s_map.setTextureRect( IntRect(0,106,74,127-106) ); }
-
-				if (TileMap[i][j]=='w'){ s_map.setTextureRect( IntRect(99,224,140-99,255-224) ); }
-
-				if (TileMap[i][j]=='r'){ s_map.setTextureRect( IntRect(143-32,112,16,16) ); }
-
-				if (TileMap[i][j]== 'U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }
-
-				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }
+				if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }			// Земля
+				if (TileMap[i][j]=='i'){ s_map.setTextureRect( IntRect(0,17,14,20) ); }					// Монеты
+				if (TileMap[i][j]=='k'){ s_map.setTextureRect( IntRect(143,112,16,16) ); }				// Красный кирпич
+				if (TileMap[i][j]=='c'){ s_map.setTextureRect( IntRect(143-16,112,16,16) ); }			// [?]
+				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// Т -обр. труба
+				if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
+				if (TileMap[i][j]=='g'){ s_map.setTextureRect( IntRect(0,16*9-5,3*16,16*2+5) ); }		// Фон. гора зелени
+				if (TileMap[i][j]=='d'){ s_map.setTextureRect( IntRect(0,106,74,127-106) ); }			// Куст
+				if (TileMap[i][j]=='w'){ s_map.setTextureRect( IntRect(99,224,140-99,255-224) ); }		// Облако
+				if (TileMap[i][j]=='r'){ s_map.setTextureRect( IntRect(143-32,112,16,16) ); }			// Красный блок
+				if (TileMap[i][j]=='U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }				// Замок
+				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
 
 				s_map.setPosition(j*16 - offsetX, i*16 - offsetY);
 				window.draw(s_map);
 			}
+// =============================================================
 
 		window.draw(p.sprite);
 		window.draw(enemy.sprite);
@@ -208,3 +219,12 @@ int main(){
 	}
 	return 0;
 }
+// TO DO
+/*
+	1) добавить карты
+	2) падение в яму
+	3) меню
+	4) жизненный цикл
+	\/ 5) коллизия со всеми видами 
+	\/ 6) камера в конце карты
+*/ 
