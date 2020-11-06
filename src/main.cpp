@@ -165,29 +165,41 @@ int main(){
 	// Выбор уровня
 		if(lvl == 1){ 
 			if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-			if(p.rect.left > 2233){ lvl += 1; p.rect.left = 16;	}
+			if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
 			printf("lvl 1\n");
 			window.clear(Color(107,140,255));
 			memcpy(TileMap, TileMap1, sizeof(TileMap1));
 		}
-		if(lvl == 2){ 
+		if(lvl == 1.5){ 
+			offsetX = 0;
+			if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16;	}}
+			printf("swap to lvl 1.5\n");
+			window.clear(Color(107,140,255));
+			memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
+		}
+		if(lvl == 2){
 			if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-			if(p.rect.left > 2275){ lvl += 1; p.rect.left = 16;	}
+			if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
 			printf("swap to lvl 2\n");
 			window.clear(Color(0,0,0));
 			memcpy(TileMap, TileMap2, sizeof(TileMap2));
 		}
-		if(lvl == 3){ 
+		if(lvl == 2.5){
 			offsetX = 0;
-			if(p.rect.left > 383){ lvl += 1; p.rect.left = 16;	}
-			printf("swap to lvl 3\n");
+			if(p.rect.left > 383){ lvl += 0.5; p.rect.left = 296; p.rect.top = 208; }
+			printf("swap to lvl 2.5\n");
+			window.clear(Color(107,140,255));
+			memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
+		}
+		if(lvl == 3){
+			offsetX = 0;
+			if(scores == 44){ lvl += 0.5; }
 			window.clear(Color(107,140,255));
 			memcpy(TileMap, TileMap3, sizeof(TileMap3));
 		}
 		if(lvl > 3){ check_win = true; }
-
 		printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
-		
+
 	// Большой Марио - [?]
 		if (p.mode){
 			p.Timer1 += time;
@@ -204,20 +216,20 @@ int main(){
 		if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
 		if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
 			if (p.onGround){
-				if (!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
-				if (p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
+				if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
+				if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
 			}
 		}
-		if (Keyboard::isKeyPressed(Keyboard::Escape)){ window.close(); }			// Пауза
+		if(Keyboard::isKeyPressed(Keyboard::Escape)){ window.close(); }			// Пауза
 
 		p.update(time);
 		enemy.update(time);
 
 	// Проверка столкновения ГГ и врага
-		if (p.rect.intersects(enemy.rect)){
-			if (enemy.life){
-				if (p.dy>0) { enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага прыжком сверху
-				else { p.sprite.setColor(Color::Red); }						// Умер ГГ
+		if(p.rect.intersects(enemy.rect)){
+			if(enemy.life){
+				if(p.dy>0){ enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага прыжком сверху
+				else{ p.sprite.setColor(Color::Red); }						// Умер ГГ
 			}
 		}
 		

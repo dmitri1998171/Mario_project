@@ -3,35 +3,35 @@
 
 const int H = 17, W = 150;          // Размеры карты
 float offsetX = 0, offsetY = 0;     // Смещение для камеры
-int lvl = 3;                        // Текущий уровень
+float lvl = 2.5;                    // Текущий уровень
 
 using namespace sf;
 String TileMap[H] = {};
 
 // Бонус-уровень
-String TileMapB[H] = {
-"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-"0                                                                                                                                                    0",
-"0                                                                                    w                                                   w           0",
-"0                   w                                  w                   w                                                                         0",
-"0                                      w                                       kk                         w                                          0",
-"0                                                                             k  k    k    k                                                         0",
-"0                      c                                                      k      kkk  kkk  w                                                     0",
-"0                                                                       r     k       k    k                                                         0",
-"0                                                                      rr     k  k                                             U                     0",
-"0                                                                     rrr      kk                                                                    0",
-"0               c    kckck                                           rrrr0                     0                                                     0",
-"0                                      t0                           rrrrr                                                                            0",
-"0g                                     00              t0          rrrrrr            g                                                       t0      0",
-"0           d    g       d             00              00         rrrrrrr                                        d     g                     00      0",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+String TileMap3[H] = {
+"                  w      ",    
+"                         ",
+"    w                    ",
+" iiiiiiiiiiiiiiiiiiiiiii ",
+" iiiiiiiiiiiiiiiiiiiiiii ",
+"                    w    ",
+" RRRRR    RRRRR  RRRR    ",
+"                         ",
+"    RRR    RRR  RRRRRRRR ",
+"w                        ",
+" RRRRRRR     RRRRRRRR    ",
+"           w             ",
+"    RRRRR   RRRRRRRRRRRR ",
+"                         ",
+" RRRRRRR  RRRRRRRRRRR    ",
+"                 w       ",
+"                         ",
 }; 
 
 // Уровень 1
 String TileMap1[H] = {
-"00000000000000000000000000000000000000000000000000000000                                   00000000000000000000000000000000000000000000000000000000000",
+"000000000000000000000000000000000000000000000000000000000000000000000  0000000000000000000000000000000000000000000000000000000000000000000000000000000",
 "0                                                                          w  i                                                                      0",
 "0                                                                           i i i    w                                                   w           0",
 "0         w                                  w                      k      kkkkkkk                                                                   0",
@@ -48,6 +48,27 @@ String TileMap1[H] = {
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+}; 
+
+// Уровень 1.5
+String TileMap1_5[H] = {
+"                        0  ",
+"0                       0  ",
+"0                  w    0  ",
+"0                       0  ",
+"0                       0  ",
+"0     w                 0  ",
+"0                       0  ",
+"0                       0  ",
+"0                       0  ",
+"0                       0  ",
+"0                       0  ",
+"0                     t00  ",
+"0                  q00000  ",
+"0        g         0   00  ",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
 }; 
 
 // Уровень 2
@@ -71,9 +92,9 @@ String TileMap2[H] = {
 "pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
 }; 
 
-// Уровень 3
-String TileMap3[H] = {
-"                           ",
+// Уровень 2.5
+String TileMap2_5[H] = {
+"              0000000000000",
 "0                         r",
 "0                        rr",
 "0                  w    rrr",
