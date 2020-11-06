@@ -2,10 +2,11 @@
 #include <SFML/Audio.hpp>
 
 const int H = 17, W = 150;          // Размеры карты
-float offsetX = 0, offsetY = 0;     // Смещение для тайлсета
-int lvl = 1;                        // Текущий уровень
+float offsetX = 0, offsetY = 0;     // Смещение для камеры
+int lvl = 3;                        // Текущий уровень
 
 using namespace sf;
+String TileMap[H] = {};
 
 // Бонус-уровень
 String TileMapB[H] = {
@@ -49,22 +50,21 @@ String TileMap1[H] = {
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 }; 
 
-
 // Уровень 2
-String TileMap[H] = {
+String TileMap2[H] = {
 "KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKT0KK",
-"KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKT0KK",
-"0                                                                                       K                                                         T0KK",
-"0                                                                                       Ki                                                        T0KK",
-"0                                                                                       Kii            p                     K                    T0KK",
+"KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKK KKKKKKKKKKKKKKKK KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKT0KK",
+"0         KKKKKKK                    K                  KK KKKKK                        K                                                         T0KK",
+"0          KKK                      K                                                   Ki                                                        T0KK",
+"0             K                                                                         Kii            p                     K                    T0KK",
 "0                                                                                       KKKKi           R        KKK    K  KK                     T0KK",
 "0                                                                                       K iKKKK          RRR       K   K K K                      T0KK",
 "0                                                                       R              K      K             KKK    K  K i KK                      T0KK",
 "0                                                                      RR              K      K             KKK  K  KK iii                        T0KK",
 "0                                                                     RiR      2       K  iiiiK                 KK      i  K                      T0KK",
 "0                          iiii         2  2  2  2                   RRiR               K KKKKKR         K   KKKKKKK   KpRKKK                     T0KK",
-"0                        KiKKKKiK                                   RRiiR               K               KKK  KKKpppppppppp                        T0KK",
-"0          KcKcK         KKK  KKK                                  RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
+"0          KcKcK         KiKKKKiK                                   RRiiR               K               KKK  KKKpppppppppp                        T0KK",
+"0                        KKK  KKK                                  RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
 "0                                                                 RRRRi 1                              KKKKKKKKKKKKKKKKKKKKK                      T0KK",
 "pppppppppppppppppppppppppppppppppppppppp  1  1  1  ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
 "pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
@@ -73,21 +73,21 @@ String TileMap[H] = {
 
 // Уровень 3
 String TileMap3[H] = {
-"000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
-"0                                                                                                                                                    0",
-"0                                                                                    w                                                   w           0",
-"0                   w                                  w                   w                                                                         0",
-"0                                      w                                                                  w                                          0",
-"0                                                                                                                                                    0",
-"0                      c                                                                       w                                                     0",
-"0                                                                       r                                                                            0",
-"0                                                                      rr                                                      U                     0",
-"0                                                                     rrr                                                                            0",
-"0                                                                    rrrr                      0                                                     0",
-"0                                      t0                           rrrrr                                                                            0",
-"0g                                     00              t0          rrrrrr                                                                    t0      0",
-"0                                      00              00         rrrrrrr                                        d     g                     00      0",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
-"PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
+"                           ",
+"0                         r",
+"0                        rr",
+"0                  w    rrr",
+"0                      rrrr",
+"0     w               rrrrr",
+"0                    rrrrrr",
+"0                   rrrrrrr",
+"0                  rrrrrrrr",
+"0                 rrrrrrrrr",
+"0                rrrrrrrrrr",
+"0               rrrrrrrrrrr",
+"0  m           rrrrrrrrrrrr",
+"0        d    rrrrrrrrrrrrr",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
+"PPPPPPPPPPPPPPPPPPPPPPPPPPP",
 }; 

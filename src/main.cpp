@@ -1,9 +1,10 @@
 #include "header.hpp"
 #include <stdlib.h>
+#include <string.h>
 
-int W_win = 400, H_win = 250;
+int W_window = 400, H_window = 250;
 int scores = 0, playtime = 0;
-bool life = true;
+bool life = true, check_win = false;
 
 class Player{
 	public:
@@ -52,7 +53,7 @@ class Player{
 				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || TileMap[i][j] == 'R' || // Если объект столкновения == ...
 					TileMap[i][j] == 'T' || TileMap[i][j] == 'k' || TileMap[i][j] == 'p' ||
 					TileMap[i][j] == 'r' || TileMap[i][j] == 't' || TileMap[i][j] == 'c' ||
-					TileMap[i][j] == 'K' || TileMap[i][j] == 'q'){
+					TileMap[i][j] == 'K' || TileMap[i][j] == 'q' || TileMap[i][j] == 'z'){
 					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }				// Если ГГ слева от объекта столкновения
 					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }						// Если ГГ справа
 					if ((dy>0) && (dir == 1)){ rect.top = i*16 - rect.height; dy=0; onGround = true; }	// Если ГГ сверху
@@ -115,11 +116,12 @@ class Enemy{
 };
 
 int main(){
-	RenderWindow window(VideoMode(W_win, H_win),"SFML WINDOW");
+	RenderWindow window(VideoMode(W_window, H_window),"Mario_project");
 
 	float CurrentFrame = 0;
 	Clock clock;
-// Загрузка ресурсов
+
+// ====================== Загрузка ресурсов ======================
 	Texture tileset;
 	tileset.loadFromFile("Images/Mario_tileset.png");
 
@@ -140,20 +142,52 @@ int main(){
 	Music music;
 	music.openFromFile("Audio/Mario_Theme.ogg");
 	music.setVolume(10);
-// =============================================================
+
+// ====================== Игровой цикл ======================
+// обновление экрана, обработка событий, отрисовка карты
 
 	while (window.isOpen()){
 		// music.play();
+	// Обработка событий
 		Event event;
-		
+		while (window.pollEvent(event)){
+			if (event.type == Event::Closed) window.close(); }
+
+	// Отсчет времени
 		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
 		time = time/800;
 
+	// Управление камерой
+		if(p.rect.left < 200){ offsetX = 0; }									// При загрузке уровня
+		if(p.rect.left > 200){ offsetX = p.rect.left - 200; }					// Фикс. камеры в начале карты
+	
 	// Выбор уровня
-		// if(lvl == 1){ TileMap[H] = TileMap1[H]; }
-		// if(lvl == 2){ TileMap[H] = TileMap2[H]; }
+		if(lvl == 1){ 
+			if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
+			if(p.rect.left > 2233){ lvl += 1; p.rect.left = 16;	}
+			printf("lvl 1\n");
+			window.clear(Color(107,140,255));
+			memcpy(TileMap, TileMap1, sizeof(TileMap1));
+		}
+		if(lvl == 2){ 
+			if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
+			if(p.rect.left > 2275){ lvl += 1; p.rect.left = 16;	}
+			printf("swap to lvl 2\n");
+			window.clear(Color(0,0,0));
+			memcpy(TileMap, TileMap2, sizeof(TileMap2));
+		}
+		if(lvl == 3){ 
+			offsetX = 0;
+			if(p.rect.left > 383){ lvl += 1; p.rect.left = 16;	}
+			printf("swap to lvl 3\n");
+			window.clear(Color(107,140,255));
+			memcpy(TileMap, TileMap3, sizeof(TileMap3));
+		}
+		if(lvl > 3){ check_win = true; }
 
+		printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
+		
 	// Большой Марио - [?]
 		if (p.mode){
 			p.Timer1 += time;
@@ -164,9 +198,6 @@ int main(){
 			p.mode = false;
 			}
 		}
-		
-		while (window.pollEvent(event)){
-			if (event.type == Event::Closed) window.close(); }
 
 	// Управление персонажем
 		if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
@@ -185,25 +216,16 @@ int main(){
 	// Проверка столкновения ГГ и врага
 		if (p.rect.intersects(enemy.rect)){
 			if (enemy.life){
-				if (p.dy>0) { enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага
+				if (p.dy>0) { enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага прыжком сверху
 				else { p.sprite.setColor(Color::Red); }						// Умер ГГ
 			}
 		}
-
-	// Управление камерой
-		if (p.rect.left > 200) { offsetX = p.rect.left - 200; }		// В начале карты
-		if (p.rect.left > 2180) { offsetX = W_win+1800 - 200; }		// В конце
-		// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
-
-	// Цвет фона
-		if(lvl == 1 || lvl == 3) { window.clear(Color(107,140,255)); }
-		if(lvl == 2) { window.clear(Color(0,0,0)); }
 		
 // ====================== ОТРИСОВКА КАРТЫ ======================
 		for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++){
 				s_map.setColor(Color(255, 255, 255));
-				s_map.setRotation(0);
+				s_map.setScale(1,1);
 				if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }			// Земля
 				if (TileMap[i][j]=='p'){ s_map.setTextureRect( IntRect(143-16*3,112+16,16,16) ); }		// подземелье
 				if (TileMap[i][j]=='i'){ s_map.setTextureRect( IntRect(0,17,14,20) ); }					// Монеты
@@ -218,8 +240,12 @@ int main(){
 				if (TileMap[i][j]=='U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }				// Замок
 				if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
 				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// T -обр. труба
-				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
 				if (TileMap[i][j]=='q'){ s_map.setTextureRect( IntRect(0,177,77,32) ); }				// -| обр. труба
+				if (TileMap[i][j]=='m'){ 																// |- обр. труба
+					s_map.setTextureRect( IntRect(0,177,77,32) );
+					s_map.setScale(-1,1);
+				}
+				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
 				if (TileMap[i][j]=='1'){ 																// 1-ый блок
 					s_map.setTextureRect(IntRect(143-32,112+16,16,16));
 					s_map.setColor(Color(255, 0, 0)); }		
@@ -246,8 +272,9 @@ int main(){
 	4) жизненный цикл
 	\/ 5) коллизия со всеми видами 
 	\/ 6) камера в конце карты
-	7) Выбор уровня
+	\/ 7) Выбор уровня
 	8) Правильная коллизия большого Марио
 	9) HUD(жизни, время, очки)
 	10) личные блоки (1,2)
+	11) зациклить музыку
 */ 
