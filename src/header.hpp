@@ -3,7 +3,7 @@
 
 const int H = 17, W = 150;          // Размеры карты
 float offsetX = 0, offsetY = 0;     // Смещение для камеры
-float lvl = 2.5;                    // Текущий уровень
+float lvl = 1.5;                    // Текущий уровень
 
 using namespace sf;
 String TileMap[H] = {};
@@ -84,8 +84,8 @@ String TileMap2[H] = {
 "0                                                                      RR              K      K             KKK  K  KK iii                        T0KK",
 "0                                                                     RiR      2       K  iiiiK                 KK      i  K                      T0KK",
 "0                          iiii         2  2  2  2                   RRiR               K KKKKKR         K   KKKKKKK   KpRKKK                     T0KK",
-"0          KcKcK         KiKKKKiK                                   RRiiR               K               KKK  KKKpppppppppp                        T0KK",
-"0                        KKK  KKK                                  RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
+"0          KcKcK        K iKKKKi K                                  RRiiR               K               KKK  KKKpppppppppp                        T0KK",
+"0                       KKKK  KKKK                                 RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
 "0                                                                 RRRRi 1                              KKKKKKKKKKKKKKKKKKKKK                      T0KK",
 "pppppppppppppppppppppppppppppppppppppppp  1  1  1  ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
 "pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",

@@ -1,10 +1,9 @@
-#include "header.hpp"
+// #include "header.hpp"
+#include "parameters.hpp"
 #include <stdlib.h>
 #include <string.h>
 
-int W_window = 400, H_window = 250;
-int scores = 0, playtime = 0;
-bool life = true, check_win = false;
+RenderWindow window(VideoMode(W_window, H_window),"Mario_project");
 
 class Player{
 	public:
@@ -115,126 +114,128 @@ class Enemy{
 	}
 };
 
-int main(){
-	RenderWindow window(VideoMode(W_window, H_window),"Mario_project");
+// Создаем классы героя, врагов
 
-	float CurrentFrame = 0;
-	Clock clock;
+Player p(tileset);
+Enemy enemy;
 
-// ====================== Загрузка ресурсов ======================
-	Texture tileset;
+void load_Resouces(){
 	tileset.loadFromFile("Images/Mario_tileset.png");
-
-	Sprite s_map;
 	s_map.setTexture(tileset);
 
-// Создаем классы героя, врагов
-	Player p(tileset);
-	Enemy enemy;
 	enemy.set(tileset,48*16,208);
 
-// ====================== Загрузка аудио ======================
-	SoundBuffer buffer;
+// Загрузка аудио
 	buffer.loadFromFile("Audio/Jump.ogg");
 	Sound sound(buffer);
 	sound.setVolume(10);
 
-	Music music;
 	music.openFromFile("Audio/Mario_Theme.ogg");
 	music.setVolume(10);
+}
 
-// ====================== Игровой цикл ======================
-// обновление экрана, обработка событий, отрисовка карты
-
-	while (window.isOpen()){
-		// music.play();
+void other_Func(){
 	// Обработка событий
-		Event event;
 		while (window.pollEvent(event)){
 			if (event.type == Event::Closed) window.close(); }
-
-	// Отсчет времени
-		float time = clock.getElapsedTime().asMicroseconds();
-		clock.restart();
-		time = time/800;
-
+		
 	// Управление камерой
 		if(p.rect.left < 200){ offsetX = 0; }									// При загрузке уровня
 		if(p.rect.left > 200){ offsetX = p.rect.left - 200; }					// Фикс. камеры в начале карты
-	
-	// Выбор уровня
-		if(lvl == 1){ 
-			if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-			if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
-			printf("lvl 1\n");
-			window.clear(Color(107,140,255));
-			memcpy(TileMap, TileMap1, sizeof(TileMap1));
-		}
-		if(lvl == 1.5){ 
-			offsetX = 0;
-			if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16;	}}
-			printf("swap to lvl 1.5\n");
-			window.clear(Color(107,140,255));
-			memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
-		}
-		if(lvl == 2){
-			if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-			if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
-			printf("swap to lvl 2\n");
-			window.clear(Color(0,0,0));
-			memcpy(TileMap, TileMap2, sizeof(TileMap2));
-		}
-		if(lvl == 2.5){
-			offsetX = 0;
-			if(p.rect.left > 383){ lvl += 0.5; p.rect.left = 296; p.rect.top = 208; }
-			printf("swap to lvl 2.5\n");
-			window.clear(Color(107,140,255));
-			memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
-		}
-		if(lvl == 3){
-			offsetX = 0;
-			if(scores == 44){ lvl += 0.5; }
-			window.clear(Color(107,140,255));
-			memcpy(TileMap, TileMap3, sizeof(TileMap3));
-		}
-		if(lvl > 3){ check_win = true; }
-		printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
+}
 
-	// Большой Марио - [?]
-		if (p.mode){
-			p.Timer1 += time;
-			if (p.Timer1>5000){
+void game_over_Func(){
+	if(health = 0){ life = false; }			// Кол-во оставшихся попыток
+	if(p.rect.top > 228){ health -=1; p.rect.left = 16; }		// -1 жизнь если упал в яму
+	if(playtime = 0){ health -=1; p.rect.left = 16; }			// -1 жизнь если время вышло 
+}
+
+void choose_lvl_func(){
+	if(lvl == 1){ 
+		if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
+		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
+		// printf("lvl 1\n");
+		window.clear(Color(107,140,255));
+		memcpy(TileMap, TileMap1, sizeof(TileMap1));
+		}
+	if(lvl == 1.5){ 
+		offsetX = 0;
+		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16;	}}
+		// printf("swap to lvl 1.5\n");
+		window.clear(Color(107,140,255));
+		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
+		}
+	if(lvl == 2){
+		if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
+		if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
+		// printf("swap to lvl 2\n");
+		window.clear(Color(0,0,0));
+		memcpy(TileMap, TileMap2, sizeof(TileMap2));
+	}
+	if(lvl == 2.5){
+		offsetX = 0;
+		if(p.rect.left > 383){ lvl += 0.5; p.rect.left = 296; p.rect.top = 208; }
+		// printf("swap to lvl 2.5\n");
+		window.clear(Color(107,140,255));
+		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
+	}
+	if(lvl == 3){
+		offsetX = 0;
+		if(scores == 44){ lvl += 0.5; }
+		window.clear(Color(107,140,255));
+		memcpy(TileMap, TileMap3, sizeof(TileMap3));
+	}
+	if(lvl > 3){ check_win = true; }
+	printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
+}
+
+void boost_func(){
+	if (p.mode){
+			printf("time: %d\n", p.Timer1);
+			p.Timer1 += myTime;
+			if (p.Timer1>1500){
 			p.sprite.setScale(1,1);
 			p.sprite.setOrigin(0,0);
 			p.Timer1 = 0;
 			p.mode = false;
 			}
 		}
+}
 
-	// Управление персонажем
-		if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
-		if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
-		if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
-			if (p.onGround){
-				if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
-				if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
-			}
+void keyboard_Func(){
+	if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
+	if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
+	if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
+		if (p.onGround){
+			if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
+			if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
 		}
-		if(Keyboard::isKeyPressed(Keyboard::Escape)){ window.close(); }			// Пауза
+	}
+	if(Keyboard::isKeyPressed(Keyboard::Escape)){ exit(0); }			// Пауза
 
-		p.update(time);
-		enemy.update(time);
+	p.update(myTime);
+	enemy.update(myTime);
+}
 
-	// Проверка столкновения ГГ и врага
-		if(p.rect.intersects(enemy.rect)){
-			if(enemy.life){
-				if(p.dy>0){ enemy.dx=0; p.dy=-0.2; enemy.life = false; }	// Убил врага прыжком сверху
-				else{ p.sprite.setColor(Color::Red); }						// Умер ГГ
-			}
+void collision_with_enemy_Func(){
+	if(p.rect.intersects(enemy.rect)){
+		if(enemy.life){
+			if(p.dy>0){ 							// Убил врага прыжком сверху
+				enemy.dx=0; 		// останавливаем врага 
+				p.dy=-0.2;  		// отпрыгиваем от врага 
+				enemy.life = false; // убиваем
+				scores += 10;		// получ. очки
+				}
+			else{									// Умер ГГ 
+					p.sprite.setColor(Color::Red);
+					health -= 1;
+				}
 		}
-		
-// ====================== ОТРИСОВКА КАРТЫ ======================
-		for (int i=0; i<H; i++)
+	}
+}
+
+void draw_map_Func(){
+	for (int i=0; i<H; i++)
 			for (int j=0; j<W; j++){
 				s_map.setColor(Color(255, 255, 255));
 				s_map.setScale(1,1);
@@ -268,17 +269,42 @@ int main(){
 				s_map.setPosition(j*16 - offsetX, i*16 - offsetY);
 				window.draw(s_map);
 			}
-// =============================================================
+}
+
+void game_cycle(){
+	Clock clock;
+	while (life){
+		// music.play();
+	
+	// Отсчет времени
+		myTime = clock.getElapsedTime().asMicroseconds();
+		clock.restart();
+		myTime = myTime/800;
+
+		other_Func();					// Регистрация событий, управление камерой
+		game_over_Func();				// Проверки на конец игры
+		choose_lvl_func();				// Выбор уровня
+		boost_func();					// Большой Марио - [?]
+		keyboard_Func();				// Управление персонажем
+		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага
+		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 
 		window.draw(p.sprite);
 		window.draw(enemy.sprite);
 		window.display();
 	}
+}
+
+int main(){
+	
+	load_Resouces();	// Загрузка ресурсов
+	game_cycle();		// Игровой цикл
+	
 	return 0;
 }
 // TO DO
 /*
-	1) добавить карты
+	\/ 1) добавить карты
 	2) падение в яму
 	3) меню
 	4) жизненный цикл
@@ -286,7 +312,8 @@ int main(){
 	\/ 6) камера в конце карты
 	\/ 7) Выбор уровня
 	8) Правильная коллизия большого Марио
-	9) HUD(жизни, время, очки)
+	9) HUD(жизни, время, очки, время буста)
 	10) личные блоки (1,2)
 	11) зациклить музыку
+	12) пауза
 */ 
