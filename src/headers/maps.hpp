@@ -1,10 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
+#include <stdlib.h>
+#include <string.h>
+#include <sstream>
+#include <iostream>
 
 const int H = 17, W = 150;          // Размеры карты
 float offsetX = 0, offsetY = 0;     // Смещение для камеры
-float lvl = 1.5;                    // Текущий уровень
+float lvl = 1;                    // Текущий уровень
 
+using namespace std;
 using namespace sf;
 String TileMap[H] = {};
 
