@@ -25,6 +25,7 @@ int main(){
 	// printf("game_state: %i\n", game_state);
 	// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
 	menu();						// Меню
+	multiplayer_munu_Func();
 	pause_Func();				// Пауза 
 	game_cycle();				// Игровой цикл
 	hud_game_over_Func();		// вывод экрана когда проиграл
