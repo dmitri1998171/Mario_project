@@ -2,29 +2,18 @@
 
 /*
 menu_state:
-0 - main menu
-1 - multiplayer
-2 - pause
+    0 - main menu
+    1 - multiplayer
+    2 - pause
 */ 
 
 void menu();
 void multiplayer_menu_Func();
-// --------------------------------------------
-void play_game_script();
-void multiplayer_script();
-void quit_script();
-
-void host_script();
-void client_script();
-void back_script();
-
-void menu_script();
 
 // ======================================================================
 
 void multiplayer_menu_Func(){
     if(menu_state == 1){
-        bg_tex.loadFromFile("Images/background.png");
         bg_sprite.setTexture(bg_tex);
         bg_sprite.setScale(1.25, 1.6);
 
@@ -65,8 +54,7 @@ void multiplayer_menu_Func(){
 
         while(1){
             event_Func();
-            // Click_Func(host_script, client_script, back_script);
-
+            
             window.clear();
             window.draw(bg_sprite);
 
@@ -86,7 +74,6 @@ void multiplayer_menu_Func(){
 void menu(){
     if(game_state == 0){   
         if(menu_state == 0){
-            bg_tex.loadFromFile("Images/background.png");
             bg_sprite.setTexture(bg_tex);
             bg_sprite.setScale(1.25, 1.6);
 
@@ -127,7 +114,6 @@ void menu(){
 
             while(1){
                 event_Func();
-                // Click_Func(play_game_script, multiplayer_script, quit_script);
 
                 window.clear();
                 window.draw(bg_sprite);
@@ -148,7 +134,7 @@ void menu(){
 }
 
 void pause_Func(){
-    if(game_state == 2){
+    if(game_state == 0){
         if(menu_state == 2){
             RectangleShape bg(Vector2f(W_window, H_window));
             bg.setFillColor(Color(255,255,255, 100));
@@ -195,7 +181,6 @@ void pause_Func(){
 
             while(1){
                 event_Func();
-                // Click_Func(game_cycle,menu_script,quit_script);
 
                 window.clear();
                 window.draw(bg);
@@ -214,19 +199,6 @@ void pause_Func(){
         }
     }
 }
-
-// ======================================================================
-
-void play_game_script(){ printf("play game\n"); game_state = 1; game_cycle(); }
-void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
-void quit_script(){ printf("Quit\n"); exit(0); }
-
-void host_script(){  }
-void client_script(){  }
-void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
-
-void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }
-void menu_script(){ printf("Main menu\n"); game_state = 0; menu_state = 0; menu(); }
 
 // ======================================================================
 

@@ -5,6 +5,7 @@ int game_state = 0, scores = 0, health = 3;
 float myTime;
 int playtime = 0;
 int menu_state = 0;
+bool start_var = true;
 
 Texture tileset, bg_tex;
 Sprite s_map, bg_sprite, menu_image;
