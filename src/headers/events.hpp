@@ -7,7 +7,15 @@ void menu();
 
 // --------------------------------------------
 
-void play_game_script(){ printf("play game\n"); game_state = 1; start_var = true; game_cycle(); }
+void play_game_script(){ 
+    printf("play game\n"); 
+    game_state = 1; 
+    start_var = true; 
+    health = 3;
+    scores = 0;
+    playtime = 0;
+    game_cycle(); }
+
 void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
 void quit_script(){ printf("Quit\n"); exit(0); }
 
@@ -41,7 +49,7 @@ void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_scrip
 void event_Func(){
 // Обработка событий
 	while (window.pollEvent(event)){
-		if (event.type == Event::Closed) exit(0); 
+		if (event.type == Event::Closed) { exit(0); }  
 		
 		if (event.type == Event::MouseButtonReleased &&
         	event.mouseButton.button == Mouse::Left){
@@ -53,7 +61,11 @@ void event_Func(){
 				if(menu_state == 2){
 					Click_Func(continue_script,menu_script,quit_script); }
 			}
-		}
+            if(game_state == 3){ 
+                Click_Func(play_game_script, quit_script, quit_script); }
+            if(game_state == 3){ 
+                Click_Func(play_game_script, quit_script, quit_script); }
+        }
 	
 		if (event.type == Event::KeyReleased &&
         event.key.code == Keyboard::Escape){

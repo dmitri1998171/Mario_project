@@ -28,6 +28,10 @@ int main(){
 	// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
 	
 	menu();						// Меню
+	pause_Func();				// Пауза
+	game_cycle();				// Игра
+	hud_game_over_Func();		// Проиграл
+	game_finished_Func();		// Выиграл
 	return 0;
 }
 /*	игровые состояния:
@@ -43,5 +47,4 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
-	12) пауза
 */ 

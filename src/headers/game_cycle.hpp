@@ -13,7 +13,7 @@ void camera_Func(){
 void game_over_Func(){
 	if(health == 0){ game_state = 3; }			// Кол-во оставшихся попыток
 	if(p.rect.top > 260){ health -=1; p.rect.left = 16; p.rect.top = 208; }		// -1 жизнь если упал в яму
-	// if(playtime = 0){ health -=1; p.rect.left = 16; p.rect.top = 208; }			// -1 жизнь если время вышло 
+	if(game_timer == 0){ health -=1; p.rect.left = 16; p.rect.top = 208; }			// -1 жизнь если время вышло 
 }
 
 void choose_lvl_func(){
@@ -56,15 +56,17 @@ void choose_lvl_func(){
 
 void boost_func(){
 	if (p.mode){
-			printf("time: %d\n", p.Timer1);
-			p.Timer1 += myTime;
-			if (p.Timer1>1500){
-			p.sprite.setScale(1,1);
-			p.sprite.setOrigin(0,0);
-			p.Timer1 = 0;
+		// printf("boost_time: %d\n", p.Timer1);
+		p.Timer1 += myTime;
+		if (p.Timer1>1500){
 			p.mode = false;
-			}
 		}
+	}
+	if(!p.mode){
+		p.sprite.setScale(1,1);
+		p.sprite.setOrigin(0,0);
+		p.Timer1 = 0;
+	}
 }
 
 void keyboard_Func(){
@@ -89,11 +91,19 @@ void collision_with_enemy_Func(){
 				p.dy=-0.2;  		// отпрыгиваем от врага 
 				enemy.life = false; // убиваем
 				scores += 10;		// получ. очки
-				}
-			else{									// Умер ГГ 
-					p.sprite.setColor(Color::Red);
-					health -= 1;
-				}
+			}
+			else{ 									// Умер ГГ 
+				if(p.mode){ p.mode = false; kill_boost = true;}			// если на бусте, то откл. буст
+				if(!p.mode){											// если простой ГГ
+					if(kill_boost){ 									// если только после буст
+						kill_boost_timer += myTime;						// то отсчит. 2 сек. чтобы отойти от врага
+						if (kill_boost_timer > 200){ kill_boost = false; }} // и откл. отсчет
+					if(!kill_boost){									// если >2 сек. от буста или простой ГГ
+						health -= 1;									// -1 жизнь
+						p.rect.left = 16;								// уровень с начала
+					}
+				}	
+			}
 		}
 	}
 }
@@ -137,7 +147,8 @@ void draw_map_Func(){
 
 void game_cycle(){
 	Clock clock;
-		
+	
+// если только начал играть(не продолжить)
 	if(start_var){ lvl = 1; p.rect.left = 16; p.rect.top = 208; }
 	
 	while(game_state == 1){
@@ -150,8 +161,10 @@ void game_cycle(){
 		clock.restart();
 		myTime = myTime/800;
 		
-		// playtime += myTime;
-		// printf("playTime: %d\n", playtime);
+	// Таймер оставшегося времени на уровень
+		game_timer = 120;
+		playtime += myTime / (2*1000);	// Время в секундах
+		game_timer = game_timer - playtime;
 
 		event_Func();					// Регистрация событий, управление камерой
 		camera_Func();					// Управление камерой
@@ -159,7 +172,9 @@ void game_cycle(){
 		choose_lvl_func();				// Выбор уровня
 		boost_func();					// Большой Марио - [?]
 		keyboard_Func();				// Управление персонажем
-		view.setCenter(p.rect.left + 100, p.rect.top); 
+		
+		// view.setCenter(p.rect.left + 100, p.rect.top); 
+		
 		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 

@@ -13,7 +13,7 @@ void hud_game_Func(){
 	ostringstream hud_health;
 	hud_health << health;
 	ostringstream hud_time;
-	hud_time << playtime;
+	hud_time << game_timer;
 
-	HUD("Scores: "+hud_scores.str()+"\t\t\t  Lifes: "+hud_health.str()+"\t\t\t\tTime: "+hud_time.str(),12,10,10,0,0);
+	HUD("Scores: "+hud_scores.str()+"\t\t\t  Lifes: "+hud_health.str()+"\t\t\t  Time: "+hud_time.str(),12,10,10,0,0);
 }
