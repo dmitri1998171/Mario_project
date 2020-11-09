@@ -1,19 +1,85 @@
 #include "hud.hpp"
 
+void pause_Func();
+// --------------------------------------------
+void play_game_script();
+void multiplayer_script();
+void quit_script();
+
+void host_script();
+void client_script();
+void back_script();
+
+void continue_script();
+void menu_script();
+// --------------------------------------------
+void game_cycle();
+
 // Объявляем классы героя, врагов
 Player p(tileset);
 Enemy enemy;
 
+void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_script)()){
+	Vector2i mousePosition = Mouse::getPosition(window);
+	// printf("\tX: %i\tY: %i\n", mousePosition.x, mousePosition.y);
+	
+	// if (Mouse::isButtonPressed(Mouse::Left)){
+		if(mousePosition.x > 123 && mousePosition.x < 265){
+			if(mousePosition.y > 133 && mousePosition.y < 156){
+				first_script();
+			}
+		}
+	// }
+
+	// if (Mouse::isButtonPressed(Mouse::Left)){
+		if(mousePosition.x > 108 && mousePosition.x < 280){
+			if(mousePosition.y > 175 && mousePosition.y < 200){
+				{ second_script(); }
+			}
+		}
+	// }
+
+	// if (Mouse::isButtonPressed(Mouse::Left)){
+		if(mousePosition.x > 160 && mousePosition.x < 240){
+			if(mousePosition.y > 213 && mousePosition.y < 237){
+				third_script();
+			}
+		}
+	// }
+}
+
 void event_Func(){
 // Обработка событий
 	while (window.pollEvent(event)){
-		if (event.type == Event::Closed) window.close(); }
+		if (event.type == Event::Closed) window.close(); 
+		
+		if (event.type == Event::MouseButtonReleased &&
+        	event.mouseButton.button == Mouse::Left){
+			if(game_state == 0 || game_state == 2){
+				if(menu_state == 0){
+					Click_Func(play_game_script, multiplayer_script, quit_script);
+				}
+				if(menu_state == 1){
+					Click_Func(host_script, client_script, back_script);
+				}
+				if(menu_state == 2){
+					Click_Func(continue_script,menu_script,quit_script);
+				}
+			}
+		}
 	
-	if(Keyboard::isKeyPressed(Keyboard::Escape)){ 
-		if(game_state == 1){ game_state = 2; }		// Пауза
-		if(game_state == 0 || 
-		   game_state == 3 || 
-		   game_state == 4){ exit(0); }				// Выход из игры		
+		if (event.type == Event::KeyReleased &&
+        event.key.code == Keyboard::Escape){
+			if(game_state == 1){ 
+				printf("Pause\n");
+				game_state = 2; 
+				menu_state = 2; 
+				pause_Func(); }		// Пауза
+			if(game_state == 2){ game_state = 1; game_cycle(); }		// Продолжить
+			if(game_state == 0 || 
+			game_state == 3 || 
+			game_state == 4){ exit(0); }				// Выход из игры		
+		}
 	}
 }
 
