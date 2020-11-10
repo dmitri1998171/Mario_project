@@ -20,7 +20,8 @@ void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_
 void quit_script(){ printf("Quit\n"); exit(0); }
 
 void host_script(){  
-    printf("HOST_SCRIPT\n");
+  printf("HOST_SCRIPT\n");
+	im_host=true;
 	sf::IpAddress PublicIP = sf::IpAddress::getLocalAddress();
 	std::cout <<  "Public IP:" << PublicIP << std::endl;
 	std::cout <<  "Public IP:" << sf::IpAddress::getPublicAddress() << std::endl;
@@ -47,12 +48,24 @@ void host_script(){
    
   std::cout << "New client connected: " << client.getRemoteAddress() << std::endl;
    // Receive a message from the client
-  
+  char data[255];
 	while(true){
 		sf::Packet packet;
-    client.receive(packet);
-  
-    sf::Uint16 x;
+		std::size_t received;
+    memset(data, 0, sizeof(data));
+		if(client.receive(data, sizeof(data), received) == sf::Socket::Done)
+			printf("\treceived:	%s\n", data);
+		/*
+		if(client.receive(packet) != sf::Socket::Done)
+		{
+			printf("receive: error\n");
+			exit(EXIT_FAILURE);
+		}
+		else
+			printf("receive: success\n");
+		*/
+		/*
+		sf::Uint16 x;
     std::string s;
     double d;
   
@@ -60,28 +73,42 @@ void host_script(){
     if (packet >> x) {
       std::cout << x << std::endl;
     }
+		*/
 	}
 }
+sf::TcpSocket socket;
 void client_script(){  
-    sf::TcpSocket socket;
-  sf::Socket::Status status = socket.connect("127.0.0.1", 1998);
-  if (status != sf::Socket::Done){
+	
+  if(im_client==false)
+	{	
+		sf::Socket::Status status = socket.connect("127.0.0.1", 1998);
+		if (status != sf::Socket::Done){
     //perror("Connect");
-		printf("Connect: err\n");
-    exit(EXIT_FAILURE);
-  }
-  else
-		printf("Connect: success\n");
-   //perror("Connect");
+			printf("Connect: err\n");
+			exit(EXIT_FAILURE);
+		}
+		im_client=true;
+	}
  
 	sf::Uint16 x = 10;
   std::string s = "hello";
   double d = 0.6;
+
+	char data[255]="Hello,WORLD";
   
   sf::Packet packet;
   packet << x << s << d;
  
-  socket.send(packet);
+	//socket.send(packet);
+	
+  if(socket.send(data, sizeof(data)) != sf::Socket::Done)
+	{
+		printf("send: error\n");
+		exit(EXIT_FAILURE);
+	}
+	else
+		printf("send: success");
+  
 }
 void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
 
