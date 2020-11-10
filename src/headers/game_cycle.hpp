@@ -1,6 +1,10 @@
 #include "events.hpp"
 
+void hud_game_over_Func();
+void game_finished_Func();
+
 // Объявляем классы героя, врагов
+
 Player p(tileset);
 Enemy enemy;
 
@@ -11,9 +15,9 @@ void camera_Func(){
 }
 
 void game_over_Func(){
-	if(health == 0){ game_state = 3; }			// Кол-во оставшихся попыток
-	if(p.rect.top > 260){ health -=1; p.rect.left = 16; p.rect.top = 208; }		// -1 жизнь если упал в яму
-	if(game_timer == 0){ health -=1; p.rect.left = 16; p.rect.top = 208; }			// -1 жизнь если время вышло 
+	if(health == 0){ game_state = 3; hud_game_over_Func(); }					// Кол-во оставшихся попыток
+	if(p.rect.top > 250){ health -=1; p.rect.left = 16; p.rect.top = 208; }		// -1 жизнь если упал в яму
+	if(game_timer == 0){ health -=1; p.rect.left = 16; p.rect.top = 208; }		// -1 жизнь если время вышло 
 }
 
 void choose_lvl_func(){
@@ -51,7 +55,7 @@ void choose_lvl_func(){
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap3, sizeof(TileMap3));
 	}
-	if(lvl > 3){ game_state = 4; }
+	if(lvl > 3){ game_state = 4; game_finished_Func(); }
 }
 
 void boost_func(){

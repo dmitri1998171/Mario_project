@@ -14,27 +14,6 @@ using namespace std;
 using namespace sf;
 String TileMap[H] = {};
 
-// Бонус-уровень
-String TileMap3[H] = {
-"                  w      ",    
-"                         ",
-"    w                    ",
-" iiiiiiiiiiiiiiiiiiiiiii ",
-" iiiiiiiiiiiiiiiiiiiiiii ",
-"                    w    ",
-" RRRRR    RRRRR  RRRR    ",
-"                         ",
-"    RRR    RRR  RRRRRRRR ",
-"w                        ",
-" RRRRRRR     RRRRRRRR    ",
-"           w             ",
-"    RRRRR   RRRRRRRRRRRR ",
-"                         ",
-" RRRRRRR  RRRRRRRRRRR    ",
-"                 w       ",
-"                         ",
-}; 
-
 // Уровень 1
 String TileMap1[H] = {
 "000000000000000000000000000000000000000000000000000000000000000000000  0000000000000000000000000000000000000000000000000000000000000000000000000000000",
@@ -49,8 +28,8 @@ String TileMap1[H] = {
 "0             i                                t0                   k                                    r                                           0",
 "0            i i                               00                   kii                            r      r                                          0",
 "0           i   i                              00   kkck          kkkkkk                         rir       r                                         0",
-"0        c  i   i              t0              T0   ii                                         r rirrr      r                                        0",
-"0                     g        00              T0                d                           r r riri        r       d     g                         0",
+"0           i   i              t0              T0   ii                                         r rirrr      r                                        0",
+"0        i            g        00              T0                d                           r r riri        r       d     g                         0",
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP     PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPP   PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP      PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP",
@@ -117,4 +96,26 @@ String TileMap2_5[H] = {
 "PPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPPPPPPPPPPPPPPPP",
 "PPPPPPPPPPPPPPPPPPPPPPPPPPP",
+}; 
+
+
+// уровень 3
+String TileMap3[H] = {
+"                  w      ",    
+"                         ",
+"    w                    ",
+" iiiiiiiiiiiiiiiiiiiiiii ",
+" iiiiiiiiiiiiiiiiiiiiiii ",
+"                    w    ",
+" RRRRR    RRRRR  RRRR    ",
+"                         ",
+"    RRR    RRR  RRRRRRRR ",
+"w                        ",
+" RRRRRRR     RRRRRRRR    ",
+"           w             ",
+"    RRRRR   RRRRRRRRRRRR ",
+"                         ",
+" RRRRRRR  RRRRRRRRRRR    ",
+"                 w       ",
+"                         ",
 }; 

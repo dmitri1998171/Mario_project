@@ -25,7 +25,7 @@ void load_Resouces(){
 int main(){
 	load_Resouces();	// Загрузка ресурсов
 	// printf("game_state: %i\n", game_state);
-	// printf("x: %f\ty: %f\n", p.rect.left, p.rect.top);
+	
 	
 	menu();						// Меню
 	pause_Func();				// Пауза
@@ -47,4 +47,7 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
+	12) обраб монеток
+	13) генератор в lvl3
+	14) неск. врагов
 */ 
