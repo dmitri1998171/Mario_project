@@ -19,8 +19,70 @@ void play_game_script(){
 void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
 void quit_script(){ printf("Quit\n"); exit(0); }
 
-void host_script(){  }
-void client_script(){  }
+void host_script(){  
+    printf("HOST_SCRIPT\n");
+	sf::IpAddress PublicIP = sf::IpAddress::getLocalAddress();
+	std::cout <<  "Public IP:" << PublicIP << std::endl;
+	std::cout <<  "Public IP:" << sf::IpAddress::getPublicAddress() << std::endl;
+
+  sf::TcpListener listener;
+  listener.listen(1998);
+  if(listener.listen(1998) != sf::Socket::Done){
+    printf("Listen: err\n");
+		//perror("Listen");
+  }
+  else
+		printf("Listen: success\n");
+    //perror("Listen");
+ 
+  sf::TcpSocket client;
+  if(listener.accept(client) != sf::Socket::Done){
+    //perror("Accept");
+    printf("Accept: err\n");
+		exit(EXIT_FAILURE);
+  }
+  else
+		printf("Accept: success\n");
+    //perror("Accept");
+   
+  std::cout << "New client connected: " << client.getRemoteAddress() << std::endl;
+   // Receive a message from the client
+  
+	while(true){
+		sf::Packet packet;
+    client.receive(packet);
+  
+    sf::Uint16 x;
+    std::string s;
+    double d;
+  
+    packet >> x >> s >> d;
+    if (packet >> x) {
+      std::cout << x << std::endl;
+    }
+	}
+}
+void client_script(){  
+    sf::TcpSocket socket;
+  sf::Socket::Status status = socket.connect("127.0.0.1", 1998);
+  if (status != sf::Socket::Done){
+    //perror("Connect");
+		printf("Connect: err\n");
+    exit(EXIT_FAILURE);
+  }
+  else
+		printf("Connect: success\n");
+   //perror("Connect");
+ 
+	sf::Uint16 x = 10;
+  std::string s = "hello";
+  double d = 0.6;
+  
+  sf::Packet packet;
+  packet << x << s << d;
+ 
+  socket.send(packet);
+}
 void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
 
 void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }

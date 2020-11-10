@@ -9,7 +9,7 @@ HEADER_6 := src/headers/hud.hpp
 HEADER_7 := src/headers/events.hpp
 CC := g++
 CFLAGS :=
-LDFLAGS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+LDFLAGS := -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -lsfml-network
 # $(HEADER_1) $(HEADER_2) $(HEADER_3) $(HEADER_4) $(HEADER_5) $(HEADER_6) $(HEADER_7)
 
 $(BIN_1): $(SOURCES_1) 
