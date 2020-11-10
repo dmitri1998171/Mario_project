@@ -145,6 +145,31 @@ void draw_map_Func(){
 			}
 }
 
+
+void network_client_Func()
+{
+	if(im_client==true)
+	{
+		if((((int)myTime)%15625)==0)
+		{
+			//p.rect.left	Это Х координата
+			//p.rect.top	Это Y координата
+			//Разработать механизм по которому удаленный клиент перемещается по карте
+			//keyboard_func
+			//А лучше даже передавать p.dx и p.dy Комп сам все расчитает
+			//
+			//опеределиться (после start_var) с классами для отрисовки персонажей
+		}
+	}
+	//Дописать то, что прописано в ивенте
+}
+void network_server_Func()
+{
+	if(im_host==true)
+	{
+	}
+}
+
 void game_cycle(){
 	Clock clock;
 	
@@ -166,13 +191,18 @@ void game_cycle(){
 		playtime += myTime / (2*1000);	// Время в секундах
 		game_timer = game_timer - playtime;
 
+		
 		event_Func();					// Регистрация событий, управление камерой
 		camera_Func();					// Управление камерой
 		game_over_Func();				// Проверки на конец игры
 		choose_lvl_func();				// Выбор уровня
 		boost_func();					// Большой Марио - [?]
 		keyboard_Func();				// Управление персонажем
-		
+		//Если сетевой режим
+		/*if((((int)myTime)%15625)==0)
+			printf("%f\n", playtime);*/
+		network_client_Func();	// Обработчик клиента
+		network_server_Func();	// Обработчик сервера
 		// view.setCenter(p.rect.left + 100, p.rect.top); 
 		
 		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага

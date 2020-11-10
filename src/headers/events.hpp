@@ -90,17 +90,8 @@ void client_script(){
 		im_client=true;
 	}
  
-	sf::Uint16 x = 10;
-  std::string s = "hello";
-  double d = 0.6;
-
-	char data[255]="Hello,WORLD";
+	char data[255]="CLIENT_CONNECT";
   
-  sf::Packet packet;
-  packet << x << s << d;
- 
-	//socket.send(packet);
-	
   if(socket.send(data, sizeof(data)) != sf::Socket::Done)
 	{
 		printf("send: error\n");
