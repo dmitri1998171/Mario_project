@@ -24,36 +24,46 @@ void choose_lvl_func(){
 	if(lvl == 1){ 
 		if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
-		// printf("lvl 1\n");
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1, sizeof(TileMap1));
 		}
 	if(lvl == 1.5){ 
 		offsetX = 0;
 		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16;	}}
-		// printf("swap to lvl 1.5\n");
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
 		}
 	if(lvl == 2){
 		if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
-		// printf("swap to lvl 2\n");
 		window.clear(Color(0,0,0));
 		memcpy(TileMap, TileMap2, sizeof(TileMap2));
 	}
 	if(lvl == 2.5){
 		offsetX = 0;
 		if(p.rect.left > 383){ lvl += 0.5; p.rect.left = 296; p.rect.top = 208; }
-		// printf("swap to lvl 2.5\n");
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
 	}
 	if(lvl == 3){
+		int gen_trigger = 0, local_scores = 0;
+		Time delayTime = seconds(0.9);
+		srand(time(0));
 		offsetX = 0;
-		if(scores == 44){ lvl += 0.5; }
+		if(local_scores == 100){ lvl += 0.5; }
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap3, sizeof(TileMap3));
+		
+		for (int i=0; i<H; i++){
+			for (int j=0; j<W; j++){
+				if(TileMap[i][j] == ' '){
+					gen_trigger = 0 + rand() % 2;
+					if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
+						printf("gen_trigger: %i\n", gen_trigger);
+				}
+			}
+		}
+		scores += local_scores;
 	}
 	if(lvl > 3){ game_state = 4; game_finished_Func(); }
 }
@@ -113,40 +123,41 @@ void collision_with_enemy_Func(){
 }
 
 void draw_map_Func(){
-	for (int i=0; i<H; i++)
-			for (int j=0; j<W; j++){
-				s_map.setColor(Color(255, 255, 255));
-				s_map.setScale(1,1);
-				if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }			// Земля
-				if (TileMap[i][j]=='p'){ s_map.setTextureRect( IntRect(143-16*3,112+16,16,16) ); }		// подземелье
-				if (TileMap[i][j]=='i'){ s_map.setTextureRect( IntRect(0,17,14,20) ); }					// Монеты
-				if (TileMap[i][j]=='k'){ s_map.setTextureRect( IntRect(143,112,16,16) ); }				// Красный кирпич
-				if (TileMap[i][j]=='K'){ s_map.setTextureRect( IntRect(143,112+16,16,16) ); }			// Синий кирпич
-				if (TileMap[i][j]=='c'){ s_map.setTextureRect( IntRect(143-16,112,16,16) ); }			// [?]
-				if (TileMap[i][j]=='g'){ s_map.setTextureRect( IntRect(0,16*9-5,3*16,16*2+5) ); }		// Фон. гора зелени
-				if (TileMap[i][j]=='d'){ s_map.setTextureRect( IntRect(0,106,74,127-106) ); }			// Куст
-				if (TileMap[i][j]=='w'){ s_map.setTextureRect( IntRect(99,224,140-99,255-224) ); }		// Облако
-				if (TileMap[i][j]=='r'){ s_map.setTextureRect( IntRect(143-32,112,16,16) ); }			// Красный блок
-				if (TileMap[i][j]=='R'){ s_map.setTextureRect( IntRect(143-32,112+16,16,16) ); }		// Синий блок
-				if (TileMap[i][j]=='U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }				// Замок
-				if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
-				if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// T -обр. труба
-				if (TileMap[i][j]=='q'){ s_map.setTextureRect( IntRect(0,177,77,32) ); }				// -| обр. труба
-				if (TileMap[i][j]=='m'){ 																// |- обр. труба
-					s_map.setTextureRect( IntRect(0,177,77,32) );
-					s_map.setScale(-1,1);
-				}
-				if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
-				if (TileMap[i][j]=='1'){ 																// 1-ый блок
-					s_map.setTextureRect(IntRect(143-32,112+16,16,16));
-					s_map.setColor(Color(255, 0, 0)); }		
-				if (TileMap[i][j]=='2'){ 																// 2-ой блок
-					s_map.setTextureRect( IntRect(143-32,112+16,16,16));
-					s_map.setColor(Color(0, 0, 255)); }		
-
-				s_map.setPosition(j*16 - offsetX, i*16 - offsetY);
-				window.draw(s_map);
+	for (int i=0; i<H; i++){
+		for (int j=0; j<W; j++){
+			s_map.setColor(Color(255, 255, 255));
+			s_map.setScale(1,1);
+			if (TileMap[i][j]=='P'){ s_map.setTextureRect( IntRect(143-16*3,112,16,16) ); }			// Земля
+			if (TileMap[i][j]=='p'){ s_map.setTextureRect( IntRect(143-16*3,112+16,16,16) ); }		// подземелье
+			if (TileMap[i][j]=='i'){ s_map.setTextureRect( IntRect(0,17,14,20) ); }					// Монеты
+			if (TileMap[i][j]=='k'){ s_map.setTextureRect( IntRect(143,112,16,16) ); }				// Красный кирпич
+			if (TileMap[i][j]=='K'){ s_map.setTextureRect( IntRect(143,112+16,16,16) ); }			// Синий кирпич
+			if (TileMap[i][j]=='c'){ s_map.setTextureRect( IntRect(143-16,112,16,16) ); }			// [?]
+			if (TileMap[i][j]=='g'){ s_map.setTextureRect( IntRect(0,16*9-5,3*16,16*2+5) ); }		// Фон. гора зелени
+			if (TileMap[i][j]=='d'){ s_map.setTextureRect( IntRect(0,106,74,127-106) ); }			// Куст
+			if (TileMap[i][j]=='w'){ s_map.setTextureRect( IntRect(99,224,140-99,255-224) ); }		// Облако
+			if (TileMap[i][j]=='r'){ s_map.setTextureRect( IntRect(143-32,112,16,16) ); }			// Красный блок
+			if (TileMap[i][j]=='R'){ s_map.setTextureRect( IntRect(143-32,112+16,16,16) ); }		// Синий блок
+			if (TileMap[i][j]=='U'){ s_map.setTextureRect( IntRect(96,4,107,105) ); }				// Замок
+			if (TileMap[i][j]=='T'){ s_map.setTextureRect( IntRect(0,67,32,95-47) ); }				// | -обр. труба
+			if (TileMap[i][j]=='t'){ s_map.setTextureRect( IntRect(0,47,32,95-47) ); }				// T -обр. труба
+			if (TileMap[i][j]=='q'){ s_map.setTextureRect( IntRect(0,177,77,32) ); }				// -| обр. труба
+			if (TileMap[i][j]=='m'){ 																// |- обр. труба
+				s_map.setTextureRect( IntRect(0,177,77,32) );
+				s_map.setScale(-1,1);
 			}
+			if ((TileMap[i][j]==' ') || (TileMap[i][j]=='0')){ continue; }							// 0 - невидимый блок
+			if (TileMap[i][j]=='1'){ 																// 1-ый блок
+				s_map.setTextureRect(IntRect(143-32,112+16,16,16));
+				s_map.setColor(Color(255, 0, 0)); }		
+			if (TileMap[i][j]=='2'){ 																// 2-ой блок
+				s_map.setTextureRect( IntRect(143-32,112+16,16,16));
+				s_map.setColor(Color(0, 0, 255)); }		
+
+			s_map.setPosition(j*16 - offsetX, i*16 - offsetY);
+			window.draw(s_map);
+		}
+	}
 }
 
 void game_cycle(){
@@ -176,9 +187,7 @@ void game_cycle(){
 		choose_lvl_func();				// Выбор уровня
 		boost_func();					// Большой Марио - [?]
 		keyboard_Func();				// Управление персонажем
-		
-		// view.setCenter(p.rect.left + 100, p.rect.top); 
-		
+				
 		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 

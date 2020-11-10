@@ -3,12 +3,13 @@
 #include <SFML/Network.hpp>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sstream>
 #include <iostream>
 
 const int H = 17, W = 150;          // Размеры карты
 float offsetX = 0, offsetY = 0;     // Смещение для камеры
-float lvl = 1;                    // Текущий уровень
+float lvl = 3;                    // Текущий уровень
 
 using namespace std;
 using namespace sf;
