@@ -42,16 +42,27 @@ class Player{
 	}
 
 	void Collision(int dir){
-		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++)							// Проход по строкам кратным размеру 1 тайла
+		for (int i=rect.top/16; i<(rect.top+rect.height)/16; i++){							// Проход по строкам кратным размеру 1 тайла
 			for (int j=rect.left/16; j<(rect.left+rect.width)/16; j++){						// ... по столбцам ...
 				if (TileMap[i][j] == 'P' || TileMap[i][j] == '0' || TileMap[i][j] == 'R' || // Если объект столкновения == ...
 					TileMap[i][j] == 'T' || TileMap[i][j] == 'k' || TileMap[i][j] == 'p' ||
 					TileMap[i][j] == 'r' || TileMap[i][j] == 't' || TileMap[i][j] == 'c' ||
-					TileMap[i][j] == 'K' || TileMap[i][j] == 'q' || TileMap[i][j] == 'z'){
-					if ((dx>0) && (dir == 0)){ rect.left = j*16 - rect.width; }				// Если ГГ слева от объекта столкновения
-					if ((dx<0) && (dir == 0)){ rect.left = j*16 + 16; }						// Если ГГ справа
-					if ((dy>0) && (dir == 1)){ rect.top = i*16 - rect.height; dy=0; onGround = true; }	// Если ГГ сверху
-					if ((dy<0) && (dir == 1)){ 												// Если ГГ снизу
+					TileMap[i][j] == 'K' || TileMap[i][j] == 'q' || TileMap[i][j] == 'z' 
+					|| TileMap[i][j] == 'i'
+					){
+					if ((dx>0) && (dir == 0)){ 							// Если ГГ слева от объекта столкновения
+						if(TileMap[i][j] == 'i'){ TileMap[i][j] = ' '; scores += 1; }
+						else{ rect.left = j*16 - rect.width; }}
+					
+					if ((dx<0) && (dir == 0)){ 							// Если ГГ справа
+						if(TileMap[i][j] == 'i'){ TileMap[i][j] = ' '; scores += 1; }
+						else{ rect.left = j*16 + 16; }}						
+					
+					if ((dy>0) && (dir == 1)){ 							// Если ГГ сверху
+						if(TileMap[i][j] == 'i'){ TileMap[i][j] = ' '; scores += 1; }
+						else{ rect.top = i*16 - rect.height; dy=0; onGround = true; }}	
+					
+					if ((dy<0) && (dir == 1)){ 							// Если ГГ снизу
 						// Обработка [?]
 						if (TileMap[i][j] == 'c'){
 							TileMap[i][j] = ' '; 		// Убираем [?] с карты
@@ -59,12 +70,16 @@ class Player{
 							sprite.setOrigin(8,8);		// устанавливаем геом. центр ГГ
 							mode = true;				// вкл. модификатор
 						}
-						if(TileMap[i][j] == 'k' || TileMap[i][j] == 'K'){ TileMap[i][j] = ' '; } // Убираем блок с карты
-						
-						rect.top = i*16 + 16; dy=0; 
-						}
+						// Обработка кирпич. блока (красный и синий)
+						else if(TileMap[i][j] == 'k' || TileMap[i][j] == 'K'){ TileMap[i][j] = ' '; } // Убираем блок с карты
+						// Обработка монеток
+						else if(TileMap[i][j] == 'i'){ TileMap[i][j] = ' '; scores += 1; }
+
+						else{ rect.top = i*16 + 16; dy=0; }
+					}
 				}
 			}
+		}
 	}
 };
 

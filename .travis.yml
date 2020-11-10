@@ -1,0 +1,6 @@
+install: ./install-dependencies.sh
+language: cpp
+os: linux
+script: make -B && ./Mario_project
+deploy:
+  skip_cleanup: true
