@@ -103,7 +103,7 @@ class Enemy{
 		sprite.setTexture(image);
 		rect = FloatRect(x,y,16,16);
 
-		dx=0.05;
+		dx=-0.05;
 		CurrentFrame = 0;
 		life = true;
 	}
@@ -113,21 +113,22 @@ class Enemy{
 		Collision();
 
 		CurrentFrame += time * 0.005;
-		if (CurrentFrame>2){ CurrentFrame -= 2; }
+		if(CurrentFrame>2){ CurrentFrame -= 2; }
 
 		sprite.setTextureRect(IntRect(18*int (CurrentFrame),0,16,16));
-		if (!life){ sprite.setTextureRect(IntRect(58,0,16,16)); }
+		if(!life){ sprite.setTextureRect(IntRect(58,0,16,16)); }
 
 		sprite.setPosition(rect.left - offsetX, rect.top - offsetY);
 	}
 
 	void Collision(){
-		for (int i = rect.top/16 ; i<(rect.top+rect.height)/16; i++)
-			for (int j = rect.left/16; j<(rect.left+rect.width)/16; j++){
-				if ((TileMap[i][j]=='P') || (TileMap[i][j]=='0')){ 
-					if (dx>0){ rect.left =  j*16 - rect.width; dx*=-1; }
-					else if (dx<0){ rect.left =  j*16 + 16;  dx*=-1; }				
+		for(int i = rect.top/16 ; i<(rect.top+rect.height)/16; i++){
+			for(int j = rect.left/16; j<(rect.left+rect.width)/16; j++){
+				if((TileMap[i][j]=='P') || (TileMap[i][j]=='0')){ 
+					if(dx>0){ rect.left =  j*16 - rect.width; dx*=-1; }
+					else if(dx<0){ rect.left =  j*16 + 16;  dx*=-1; }				
 				}
 			}
+		}
 	}
 };

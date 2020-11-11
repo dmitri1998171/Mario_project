@@ -4,7 +4,6 @@ void hud_game_over_Func();
 void game_finished_Func();
 
 // Объявляем классы героя, врагов
-
 Player p(tileset);
 Enemy enemy;
 
@@ -25,23 +24,30 @@ void choose_lvl_func(){
 		if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
 		window.clear(Color(107,140,255));
+		// enemy.set(tileset,48*16,208);
 		memcpy(TileMap, TileMap1, sizeof(TileMap1));
-		}
+	}
 	if(lvl == 1.5){ 
 		offsetX = 0;
-		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16;	}}
+		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16; enemy.life = true; }}
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
-		}
+	}
 	if(lvl == 2){
 		if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
 		window.clear(Color(0,0,0));
+		// enemy.set(tileset,48*12,208);
 		memcpy(TileMap, TileMap2, sizeof(TileMap2));
 	}
 	if(lvl == 2.5){
 		offsetX = 0;
-		if(p.rect.left > 383){ lvl += 0.5; p.rect.left = 296; p.rect.top = 208; }
+		if(p.rect.left > 383){ 
+			lvl += 0.5; 
+			p.rect.left = 296;
+			p.rect.top = 208;
+			enemy.life = false;
+		}
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
 	}
@@ -61,6 +67,7 @@ void choose_lvl_func(){
 					if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
 						printf("gen_trigger: %i\n", gen_trigger);
 				}
+				// sleep(1);
 			}
 		}
 		scores += local_scores;
@@ -92,14 +99,11 @@ void keyboard_Func(){
 			if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
 		}
 	}
-
-	p.update(myTime);
-	enemy.update(myTime);
 }
 
 void collision_with_enemy_Func(){
-	if(p.rect.intersects(enemy.rect)){
-		if(enemy.life){
+	if(enemy.life){
+		if(p.rect.intersects(enemy.rect)){
 			if(p.dy>0){ 							// Убил врага прыжком сверху
 				enemy.dx=0; 		// останавливаем врага 
 				p.dy=-0.2;  		// отпрыгиваем от врага 
@@ -107,7 +111,7 @@ void collision_with_enemy_Func(){
 				scores += 10;		// получ. очки
 			}
 			else{ 									// Умер ГГ 
-				if(p.mode){ p.mode = false; kill_boost = true;}			// если на бусте, то откл. буст
+				if(p.mode){ p.mode = false; kill_boost = true; }		// если на бусте, то откл. буст
 				if(!p.mode){											// если простой ГГ
 					if(kill_boost){ 									// если только после буст
 						kill_boost_timer += myTime;						// то отсчит. 2 сек. чтобы отойти от врага
@@ -166,6 +170,9 @@ void game_cycle(){
 // если только начал играть(не продолжить)
 	if(start_var){ lvl = 1; p.rect.left = 16; p.rect.top = 208; }
 	
+	if(lvl == 1){ enemy.set(tileset,48*16,208); }
+	if(lvl == 2){ enemy.set(tileset,48*12,208); }
+
 	while(game_state == 1){
 	// music.play();
 	// вывод индикаторов очков, жизней, времени на экран
@@ -191,7 +198,10 @@ void game_cycle(){
 		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 
-		window.draw(p.sprite);
+		p.update(myTime);
+		enemy.update(myTime);
+		
+		window.draw(p.sprite); 
 		window.draw(enemy.sprite);
 		window.draw(text);
 		window.display();

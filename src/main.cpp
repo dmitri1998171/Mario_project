@@ -10,9 +10,6 @@ void load_Resouces(){
 
 	bg_tex.loadFromFile("Images/background.png");
 
-	enemy.set(tileset,48*16,208);
-	view.reset(FloatRect(0, 0, W_window, H_window));
-
 // Загрузка аудио
 	buffer.loadFromFile("Audio/Jump.ogg");
 	Sound sound(buffer);
@@ -25,8 +22,7 @@ void load_Resouces(){
 int main(){
 	load_Resouces();	// Загрузка ресурсов
 	// printf("game_state: %i\n", game_state);
-	
-	
+		
 	menu();						// Меню
 	pause_Func();				// Пауза
 	game_cycle();				// Игра

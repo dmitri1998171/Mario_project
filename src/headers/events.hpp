@@ -137,10 +137,10 @@ void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_scrip
 
 void event_Func(){
 // Обработка событий
-	while (window.pollEvent(event)){
-		if (event.type == Event::Closed) { exit(0); }  
+	while(window.pollEvent(event)){
+		if(event.type == Event::Closed) { exit(0); }  
 		
-		if (event.type == Event::MouseButtonReleased &&
+		if(event.type == Event::MouseButtonReleased &&
         	event.mouseButton.button == Mouse::Left){
 			if(game_state == 0 || game_state == 2){
 				if(menu_state == 0){
@@ -150,13 +150,13 @@ void event_Func(){
 				if(menu_state == 2){
 					Click_Func(continue_script,menu_script,quit_script); }
 			}
-            if(game_state == 3){ 
-                Click_Func(play_game_script, quit_script, quit_script); }
-            if(game_state == 3){ 
-                Click_Func(play_game_script, quit_script, quit_script); }
+      if(game_state == 3){ 
+        Click_Func(play_game_script, quit_script, quit_script); }
+      if(game_state == 3){ 
+        Click_Func(play_game_script, quit_script, quit_script); }
         }
 	
-		if (event.type == Event::KeyReleased &&
+		if(event.type == Event::KeyReleased &&
         event.key.code == Keyboard::Escape){
 			if(game_state == 1){                        // Пауза
 				printf("Pause\n");
@@ -164,31 +164,26 @@ void event_Func(){
 				menu_state = 2; 
 				pause_Func(); }		
 			if(game_state == 0 || 
-               game_state == 3 || 
-               game_state == 4){
-                if(menu_state == 2){ game_state = 1; start_var = false; game_cycle(); } // Продолжить
-                else exit(0); }         				// Выход из игры		
+          game_state == 3 || 
+          game_state == 4){
+          if(menu_state == 2){ game_state = 1; start_var = false; game_cycle(); } // Продолжить
+          else exit(0); }         				// Выход из игры		
 		}
 
 
-        // изменение размера окна
-        if(Keyboard::isKeyPressed(Keyboard::LControl)){
-            if (event.type == Event::KeyReleased &&
-                event.key.code == Keyboard::F){
-                W_desktop = VideoMode::getDesktopMode().width;
-                H_desktop = VideoMode::getDesktopMode().height;
-                printf("W: %i\tH: %i\n", W_window, H_window);
+    // изменение размера окна
+    if(Keyboard::isKeyPressed(Keyboard::LControl)){
+      if(event.type == Event::KeyReleased &&
+        event.key.code == Keyboard::F){
+        W_desktop = VideoMode::getDesktopMode().width;
+        H_desktop = VideoMode::getDesktopMode().height;
 
-                printf("win_size_check: %i\n", win_size_check);
-
-                if(win_size_check == 1){ window.setSize(Vector2u(640, 480)); }
-                if(win_size_check == 2){ window.setSize(Vector2u(W_desktop, H_desktop)); }
-                if(win_size_check == 3){ win_size_check = 0; window.setSize(Vector2u(W_window, H_window));}
-                window.display();
-                win_size_check++;
-                
-                // window.setSize(Vector2i(VideoMode::getDesktopMode()));
-            }
-        }
+        if(win_size_check == 1){ window.setSize(Vector2u(640, 480)); }
+        if(win_size_check == 2){ window.setSize(Vector2u(W_desktop, H_desktop)); }
+        if(win_size_check == 3){ win_size_check = 0; window.setSize(Vector2u(W_window, H_window));}
+        window.display();
+        win_size_check++;
+      }
+    }
 	}
 }
