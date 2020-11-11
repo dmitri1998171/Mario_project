@@ -2,7 +2,8 @@
 
 void HUD(String hud_string, int size, float x_pos, float y_pos, float x_Orig, float y_Orig){
     text.setString(hud_string);//задает строку тексту
-    text.setPosition(x_pos, y_pos);//задаем позицию текста, центр камеры
+    text.setFillColor(Color::White);
+	text.setPosition(x_pos, y_pos);//задаем позицию текста, центр камеры
     text.setOrigin(x_Orig, y_Orig);
     text.setCharacterSize(size);
 }

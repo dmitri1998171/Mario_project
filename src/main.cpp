@@ -5,7 +5,7 @@ void load_Resouces(){
 	font.loadFromFile("font/SourceCodePro-Regular.ttf");
 
 // Загрузка изображений
-	tileset.loadFromFile("Images/Mario_tileset.png");
+	tileset.loadFromFile("Images/Mario_Luigi_tileset.png");
 	s_map.setTexture(tileset);
 
 	bg_tex.loadFromFile("Images/background.png");
@@ -47,7 +47,7 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
-	12) обраб монеток
+	\/ 12) обраб монеток
 	13) генератор в lvl3
 	14) неск. врагов
 */ 

@@ -3,6 +3,7 @@
 #include <SFML/Network.hpp>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include <sstream>
 #include <iostream>
 
