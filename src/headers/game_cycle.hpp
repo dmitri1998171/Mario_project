@@ -5,7 +5,7 @@ void game_finished_Func();
 
 // Объявляем классы героя, врагов
 
-Player p(tileset);
+Player p(tileset);//LocalGame
 Enemy enemy;
 
 void camera_Func(){
@@ -84,13 +84,20 @@ void boost_func(){
 }
 
 void keyboard_Func(){
-	if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
-	if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
-	if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
-		if (p.onGround){
-			if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
-			if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
+	if(im_host==true)
+	{
+		if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
+		if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
+		if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
+			if (p.onGround){
+				if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
+				if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
+			}
 		}
+	}
+	else if(im_client==true)
+	{
+		network_client_Func();
 	}
 
 	p.update(myTime);
@@ -163,10 +170,38 @@ void draw_map_Func(){
 
 void network_client_Func()
 {
-	if(im_client==true)
-	{
-		if((((int)myTime)%15625)==0)
-		{
+	//Что нужно передавать клиаенту:
+	//	1) То, что была нажата какая-либо клавиша
+	//	2) То, что был произведен выход из игры(мультиплеера)
+	//Что нужно принимать клиенту (отдельным потоком):
+	//	1) Просчитанные сервером коордиаты его персонажа
+	//	2) Прочитанные сервером координаты персонажа хоста
+	//	3) Выход хоста из игры => конец игры(в мультиплеере) и у клиента
+	
+	if (Keyboard::isKeyPressed(Keyboard::Left)){	// Левая стрелка
+		char data[255]="Press_LEFT";
+		if(socket.send(data, sizeof(data)) != sf::Socket::Done)
+			printf("send: error\n");
+	}	
+	if (Keyboard::isKeyPressed(Keyboard::Right)){	// Правая стрелка
+		char data[255]="Press_RIGHT";
+		if(socket.send(data, sizeof(data)) != sf::Socket::Done)
+			printf("send: error\n");
+	}
+	if (Keyboard::isKeyPressed(Keyboard::Up)){		// Прыжок
+		if (p.onGround){
+			if(!p.mode){
+				char data[255]="Press_SPACE+";
+				if(socket.send(data, sizeof(data)) != sf::Socket::Done)
+					printf("send: error\n");
+			} 
+			if(p.mode){
+				char data[255]="Press_SPACE";
+				if(socket.send(data, sizeof(data)) != sf::Socket::Done)
+					printf("send: error\n");
+			}
+		}
+	}
 			//p.rect.left	Это Х координата
 			//p.rect.top	Это Y координата
 			//Разработать механизм по которому удаленный клиент перемещается по карте
