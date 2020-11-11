@@ -169,5 +169,26 @@ void event_Func(){
                 if(menu_state == 2){ game_state = 1; start_var = false; game_cycle(); } // Продолжить
                 else exit(0); }         				// Выход из игры		
 		}
+
+
+        // изменение размера окна
+        if(Keyboard::isKeyPressed(Keyboard::LControl)){
+            if (event.type == Event::KeyReleased &&
+                event.key.code == Keyboard::F){
+                W_desktop = VideoMode::getDesktopMode().width;
+                H_desktop = VideoMode::getDesktopMode().height;
+                printf("W: %i\tH: %i\n", W_window, H_window);
+
+                printf("win_size_check: %i\n", win_size_check);
+
+                if(win_size_check == 1){ window.setSize(Vector2u(640, 480)); }
+                if(win_size_check == 2){ window.setSize(Vector2u(W_desktop, H_desktop)); }
+                if(win_size_check == 3){ win_size_check = 0; window.setSize(Vector2u(W_window, H_window));}
+                window.display();
+                win_size_check++;
+                
+                // window.setSize(Vector2i(VideoMode::getDesktopMode()));
+            }
+        }
 	}
 }

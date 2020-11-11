@@ -1,5 +1,13 @@
 #include "parameters.hpp"
 
+/*
+Tileset map:
+size: 16x16
+
+80x144 - Mario
+80x163 - Luigi
+*/ 
+
 class Player{
 	public:
 		int Timer1,Timer2;
@@ -14,7 +22,7 @@ class Player{
 		Timer1 = 0;
 		mode = false;
 		sprite.setTexture(image);
-		sprite.setTextureRect(IntRect(80,144,16,16));
+		sprite.setTextureRect(IntRect(80,163,16,16));
 		rect = FloatRect(52,32,16,16);
 
 		dx=dy=0;

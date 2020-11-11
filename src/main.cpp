@@ -5,7 +5,7 @@ void load_Resouces(){
 	font.loadFromFile("font/SourceCodePro-Regular.ttf");
 
 // Загрузка изображений
-	tileset.loadFromFile("Images/Mario_tileset.png");
+	tileset.loadFromFile("Images/Mario_Luigi_tileset.png");
 	s_map.setTexture(tileset);
 
 	bg_tex.loadFromFile("Images/background.png");
