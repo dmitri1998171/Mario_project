@@ -2,10 +2,9 @@
 
 void hud_game_over_Func();
 void game_finished_Func();
-
 // Объявляем классы героя, врагов
 Player p(tileset);
-Enemy enemy;
+Enemy enemy[5];
 
 void camera_Func(){
 // Управление камерой
@@ -19,17 +18,46 @@ void game_over_Func(){
 	if(game_timer == 0){ health -=1; p.rect.left = 16; p.rect.top = 208; }		// -1 жизнь если время вышло 
 }
 
+void collision_with_enemy_Func(int k){
+	if(p.rect.intersects(enemy[k].rect)){
+		if(enemy[k].life){
+			if(p.dy>0){ 							// Убил врага прыжком сверху
+				enemy[k].dx=0; 		// останавливаем врага 
+				p.dy=-0.2;  		// отпрыгиваем от врага 
+				enemy[k].life = false; // убиваем
+				scores += 10;		// получ. очки
+			}
+			else{ 									// Умер ГГ 
+				if(p.mode){ p.mode = false; kill_boost = true; }		// если на бусте, то откл. буст
+				if(!p.mode){											// если простой ГГ
+					if(kill_boost){ 									// если только после буст
+						kill_boost_timer += myTime;						// то отсчит. 2 сек. чтобы отойти от врага
+						if (kill_boost_timer > 200){ kill_boost = false; }} // и откл. отсчет
+					if(!kill_boost){									// если >2 сек. от буста или простой ГГ
+						health -= 1;									// -1 жизнь
+						p.rect.left = 16;								// уровень с начала
+					}
+				}	
+			}
+		}
+	}
+}
+
 void choose_lvl_func(){
 	if(lvl == 1){ 
 		if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }
+		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }				// Переход на след. уровень
 		window.clear(Color(107,140,255));
-		// enemy.set(tileset,48*16,208);
 		memcpy(TileMap, TileMap1, sizeof(TileMap1));
+		for(int i=0; i<3;i++){
+			enemy[i].update(myTime);
+			window.draw(enemy[i].sprite);
+			collision_with_enemy_Func(i);	// Проверка столкновения ГГ и врага
+		}
 	}
 	if(lvl == 1.5){ 
 		offsetX = 0;
-		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16; enemy.life = true; }}
+		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16; enemy[0].life = true; }}
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
 	}
@@ -37,40 +65,43 @@ void choose_lvl_func(){
 		if(p.rect.left > 2190){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
 		window.clear(Color(0,0,0));
-		// enemy.set(tileset,48*12,208);
 		memcpy(TileMap, TileMap2, sizeof(TileMap2));
+		for(int i=3; i<6;i++){
+			enemy[i].update(myTime);
+			window.draw(enemy[i].sprite);
+			collision_with_enemy_Func(i);	// Проверка столкновения ГГ и врага
+		}
 	}
 	if(lvl == 2.5){
 		offsetX = 0;
+		local_scores = scores;
 		if(p.rect.left > 383){ 
 			lvl += 0.5; 
 			p.rect.left = 296;
 			p.rect.top = 208;
-			enemy.life = false;
 		}
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
 	}
 	if(lvl == 3){
-		int gen_trigger = 0, local_scores = 0;
-		Time delayTime = seconds(0.9);
 		srand(time(0));
 		offsetX = 0;
-		if(local_scores == 100){ lvl += 0.5; }
+		if(scores == local_scores+100){ lvl += 0.5; }
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap3, sizeof(TileMap3));
-		
-		for (int i=0; i<H; i++){
-			for (int j=0; j<W; j++){
-				if(TileMap[i][j] == ' '){
-					gen_trigger = 0 + rand() % 2;
-					if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
-						printf("gen_trigger: %i\n", gen_trigger);
+		local_timer = 0;
+		for(int i=1; i<H-1; i++){
+			for(int j=1; j<26-1; j++){
+				if(local_timer == 200){
+					local_timer = 0;
+					if(TileMap[i][j] == ' '){
+						gen_trigger = 0 + rand() % 2;
+						if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
+					}
 				}
-				// sleep(1);
+				local_timer += myTime;
 			}
 		}
-		scores += local_scores;
 	}
 	if(lvl > 3){ game_state = 4; game_finished_Func(); }
 }
@@ -97,31 +128,6 @@ void keyboard_Func(){
 		if (p.onGround){
 			if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
 			if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
-		}
-	}
-}
-
-void collision_with_enemy_Func(){
-	if(enemy.life){
-		if(p.rect.intersects(enemy.rect)){
-			if(p.dy>0){ 							// Убил врага прыжком сверху
-				enemy.dx=0; 		// останавливаем врага 
-				p.dy=-0.2;  		// отпрыгиваем от врага 
-				enemy.life = false; // убиваем
-				scores += 10;		// получ. очки
-			}
-			else{ 									// Умер ГГ 
-				if(p.mode){ p.mode = false; kill_boost = true; }		// если на бусте, то откл. буст
-				if(!p.mode){											// если простой ГГ
-					if(kill_boost){ 									// если только после буст
-						kill_boost_timer += myTime;						// то отсчит. 2 сек. чтобы отойти от врага
-						if (kill_boost_timer > 200){ kill_boost = false; }} // и откл. отсчет
-					if(!kill_boost){									// если >2 сек. от буста или простой ГГ
-						health -= 1;									// -1 жизнь
-						p.rect.left = 16;								// уровень с начала
-					}
-				}	
-			}
 		}
 	}
 }
@@ -170,8 +176,14 @@ void game_cycle(){
 // если только начал играть(не продолжить)
 	if(start_var){ lvl = 1; p.rect.left = 16; p.rect.top = 208; }
 	
-	if(lvl == 1){ enemy.set(tileset,48*16,208); }
-	if(lvl == 2){ enemy.set(tileset,48*12,208); }
+// координаты врагов 
+	// lvl1
+	enemy[0].set(tileset,48*16,208); 
+	enemy[1].set(tileset,48*14,208); 
+	enemy[2].set(tileset,48*30,208); 
+	// lvl2 
+	enemy[3].set(tileset,48*12,208); 
+	enemy[4].set(tileset,48*19,208); 
 
 	while(game_state == 1){
 	// music.play();
@@ -194,15 +206,10 @@ void game_cycle(){
 		choose_lvl_func();				// Выбор уровня
 		boost_func();					// Большой Марио - [?]
 		keyboard_Func();				// Управление персонажем
-				
-		collision_with_enemy_Func();	// Проверка столкновения ГГ и врага
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 
 		p.update(myTime);
-		enemy.update(myTime);
-		
 		window.draw(p.sprite); 
-		window.draw(enemy.sprite);
 		window.draw(text);
 		window.display();
 	}

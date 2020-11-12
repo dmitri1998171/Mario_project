@@ -152,7 +152,7 @@ void event_Func(){
 			}
       if(game_state == 3){ 
         Click_Func(play_game_script, quit_script, quit_script); }
-      if(game_state == 3){ 
+      if(game_state == 4){ 
         Click_Func(play_game_script, quit_script, quit_script); }
         }
 	

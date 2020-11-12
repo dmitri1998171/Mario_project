@@ -9,7 +9,7 @@ void load_Resouces(){
 	s_map.setTexture(tileset);
 
 	bg_tex.loadFromFile("Images/background.png");
-
+	
 // Загрузка аудио
 	buffer.loadFromFile("Audio/Jump.ogg");
 	Sound sound(buffer);
@@ -43,7 +43,5 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
-	\/ 12) обраб монеток
-	13) генератор в lvl3
 	14) неск. врагов
 */ 

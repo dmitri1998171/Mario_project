@@ -103,7 +103,7 @@ class Enemy{
 		sprite.setTexture(image);
 		rect = FloatRect(x,y,16,16);
 
-		dx=-0.05;
+		dx=0.05;
 		CurrentFrame = 0;
 		life = true;
 	}
