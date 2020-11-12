@@ -4,6 +4,17 @@ void pause_Func();
 void game_cycle();
 void multiplayer_menu_Func();
 void menu();
+void client_move_draw();
+void host_move_draw();
+
+void host_script();
+void client_script();
+
+void host_keyboard_send_Func();
+void host_keyboard_receive_Func();
+void client_keyboard_send_Func();
+void client_keyboard_receive_Func();
+
 
 // --------------------------------------------
 
@@ -19,88 +30,7 @@ void play_game_script(){
 void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
 void quit_script(){ printf("Quit\n"); exit(0); }
 
-void host_script(){  
-  printf("HOST_SCRIPT\n");
-	im_host=true;
-	sf::IpAddress PublicIP = sf::IpAddress::getLocalAddress();
-	std::cout <<  "Public IP:" << PublicIP << std::endl;
-	std::cout <<  "Public IP:" << sf::IpAddress::getPublicAddress() << std::endl;
 
-  sf::TcpListener listener;
-  listener.listen(1998);
-  if(listener.listen(1998) != sf::Socket::Done){
-    printf("Listen: err\n");
-		//perror("Listen");
-  }
-  else
-		printf("Listen: success\n");
-    //perror("Listen");
- 
-  sf::TcpSocket client;
-  if(listener.accept(client) != sf::Socket::Done){
-    //perror("Accept");
-    printf("Accept: err\n");
-		exit(EXIT_FAILURE);
-  }
-  else
-		printf("Accept: success\n");
-    //perror("Accept");
-   
-  std::cout << "New client connected: " << client.getRemoteAddress() << std::endl;
-   // Receive a message from the client
-  char data[255];
-	while(true){
-		sf::Packet packet;
-		std::size_t received;
-    memset(data, 0, sizeof(data));
-		if(client.receive(data, sizeof(data), received) == sf::Socket::Done)
-			printf("\treceived:	%s\n", data);
-		/*
-		if(client.receive(packet) != sf::Socket::Done)
-		{
-			printf("receive: error\n");
-			exit(EXIT_FAILURE);
-		}
-		else
-			printf("receive: success\n");
-		*/
-		/*
-		sf::Uint16 x;
-    std::string s;
-    double d;
-  
-    packet >> x >> s >> d;
-    if (packet >> x) {
-      std::cout << x << std::endl;
-    }
-		*/
-	}
-}
-sf::TcpSocket socket;
-void client_script(){  
-	
-  if(im_client==false)
-	{	
-		sf::Socket::Status status = socket.connect("127.0.0.1", 1998);
-		if (status != sf::Socket::Done){
-    //perror("Connect");
-			printf("Connect: err\n");
-			exit(EXIT_FAILURE);
-		}
-		im_client=true;
-	}
- 
-	char data[255]="CLIENT_CONNECT";
-  
-  if(socket.send(data, sizeof(data)) != sf::Socket::Done)
-	{
-		printf("send: error\n");
-		exit(EXIT_FAILURE);
-	}
-	else
-		printf("send: success");
-  
-}
 void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
 
 void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }

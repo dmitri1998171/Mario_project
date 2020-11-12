@@ -16,20 +16,24 @@ class Player{
 		bool onGround, mode;
 		Sprite sprite;
 		float CurrentFrame;
+		bool mario_or_luigi;//false==mario, true==luigi
 
-	Player(Texture & image){
+	Player(Texture & image, bool mario_or_luigi){
 		Timer2 = 0;
 		Timer1 = 0;
 		mode = false;
 		sprite.setTexture(image);
-		sprite.setTextureRect(IntRect(80,163,16,16));
+		if(mario_or_luigi==true)
+			sprite.setTextureRect(IntRect(80,163,16,16));
+		else
+			sprite.setTextureRect(IntRect(80,144,16,16));
 		rect = FloatRect(52,32,16,16);
 
 		dx=dy=0;
 		CurrentFrame = 0;
 	}
 
-	void update(float time){
+	void update(float time, bool mario_or_luigi){
 		rect.left += dx * time;		// Движение по формуле: "скорость, время, растояние"
 		Collision(0);				// Вызов функции рассчета столкновений
 
@@ -42,9 +46,14 @@ class Player{
 	// Анимация - смена тайлов
 		CurrentFrame += 0.005*time; 
 		if (CurrentFrame > 3){ CurrentFrame -=3; }
-		if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,144,-16,16)); }
-		if (dx>0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame),144,16,16)); }
-		
+		if(mario_or_luigi==true){
+			if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,144,-16,16)); }
+			if (dx>0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame),144,16,16)); }
+		}
+		else{
+			if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,163,-16,16)); }
+			if (dx>0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame),163,16,16)); }
+		}
 		sprite.setPosition(rect.left - offsetX,rect.top - offsetY);
 		dx=0;
 	}
@@ -90,6 +99,8 @@ class Player{
 		}
 	}
 };
+
+
 
 class Enemy{
 	public:

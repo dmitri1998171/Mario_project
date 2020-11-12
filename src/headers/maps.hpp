@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <SFML/Network.hpp>
+#include <SFML/System.hpp>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
