@@ -49,15 +49,13 @@ void choose_lvl_func(){
 		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }				// Переход на след. уровень
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1, sizeof(TileMap1));
-		for(int i=0; i<3;i++){
-			enemy[i].update(myTime);
-			window.draw(enemy[i].sprite);
-			collision_with_enemy_Func(i);	// Проверка столкновения ГГ и врага
-		}
 	}
 	if(lvl == 1.5){ 
 		offsetX = 0;
-		if(p.rect.left > 287){ if(p.rect.top > 207){ lvl += 0.5; p.rect.left = 16; enemy[0].life = true; }}
+		if(p.rect.left > 287){ if(p.rect.top > 207){ 
+			lvl += 0.5;
+			p.rect.left = 16;
+			for(int i=0; i<5; i++){ enemy[i].life = true; }}}
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
 	}
@@ -66,11 +64,6 @@ void choose_lvl_func(){
 		if(p.rect.left > 2275){ lvl += 0.5; p.rect.left = 16; }
 		window.clear(Color(0,0,0));
 		memcpy(TileMap, TileMap2, sizeof(TileMap2));
-		for(int i=3; i<6;i++){
-			enemy[i].update(myTime);
-			window.draw(enemy[i].sprite);
-			collision_with_enemy_Func(i);	// Проверка столкновения ГГ и врага
-		}
 	}
 	if(lvl == 2.5){
 		offsetX = 0;
@@ -178,8 +171,8 @@ void game_cycle(){
 	
 // координаты врагов 
 	// lvl1
-	enemy[0].set(tileset,48*16,208); 
-	enemy[1].set(tileset,48*14,208); 
+	enemy[0].set(tileset,48*16,208);
+	enemy[1].set(tileset,48*24,208); 
 	enemy[2].set(tileset,48*30,208); 
 	// lvl2 
 	enemy[3].set(tileset,48*12,208); 
@@ -207,6 +200,12 @@ void game_cycle(){
 		boost_func();					// Большой Марио - [?]
 		keyboard_Func();				// Управление персонажем
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
+
+		for(int i=0; i<5;i++){
+			enemy[i].update(myTime);
+			window.draw(enemy[i].sprite);
+			collision_with_enemy_Func(i);	// Проверка столкновения ГГ и врага
+		}
 
 		p.update(myTime);
 		window.draw(p.sprite); 

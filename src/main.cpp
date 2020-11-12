@@ -21,7 +21,6 @@ void load_Resouces(){
 
 int main(){
 	load_Resouces();	// Загрузка ресурсов
-	// printf("game_state: %i\n", game_state);
 		
 	menu();						// Меню
 	pause_Func();				// Пауза
@@ -43,5 +42,4 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
-	14) неск. врагов
 */ 
