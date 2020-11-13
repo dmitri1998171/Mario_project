@@ -2,14 +2,6 @@
 
 void hud_game_over_Func();
 void game_finished_Func();
-/*<<<<<<< HEAD
-// Объявляем классы героя, врагов
-Player p(tileset);
-Enemy enemy[5];
-=======
-
-
->>>>>>> left*/
 
 void camera_Func(Player* _p){
 // Управление камерой
@@ -23,7 +15,6 @@ void game_over_Func(Player* _p){
 	if(game_timer == 0){ health -=1; _p->rect.left = 16; _p->rect.top = 208; }		// -1 жизнь если время вышло 
 }
 
-//<<<<<<< HEAD
 void collision_with_enemy_Func(int k, Player* _p){
 	if(_p->rect.intersects(enemy[k].rect)){
 		if(enemy[k].life){
@@ -49,23 +40,15 @@ void collision_with_enemy_Func(int k, Player* _p){
 		}
 	}
 }
-/*
-void choose_lvl_func(){
-	if(lvl == 1){ 
-		if(p.rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-		if(p.rect.left > 2233){ lvl += 0.5; p.rect.left = 16; }				// Переход на след. уровень
-=======*/
 void choose_lvl_func(Player* _p){
 	if(lvl == 1){ 
 		if(_p->rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
 		if(_p->rect.left > 2233){ lvl += 0.5; _p->rect.left = 16; }
-//>>>>>>> left
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1, sizeof(TileMap1));
 	}
 	if(lvl == 1.5){ 
 		offsetX = 0;
-//<<<<<<< HEAD
 		if(_p->rect.left > 287){ 
 			if(_p->rect.top > 207){ 
 				lvl += 0.5;
@@ -73,9 +56,6 @@ void choose_lvl_func(Player* _p){
 				for(int i=0; i<5; i++){ enemy[i].life = true; }
 			}
 		}
-/*=======
-		if(_p->rect.left > 287){ if(_p->rect.top > 207){ lvl += 0.5; _p->rect.left = 16;	}}
->>>>>>> left*/
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
 	}
@@ -87,16 +67,12 @@ void choose_lvl_func(Player* _p){
 	}
 	if(lvl == 2.5){
 		offsetX = 0;
-//<<<<<<< HEAD
 		local_scores = scores;
 		if(_p->rect.left > 383){ 
 			lvl += 0.5; 
 			_p->rect.left = 296;
 			_p->rect.top = 208;
 		}
-/*=======
-		if(_p->rect.left > 383){ lvl += 0.5; _p->rect.left = 296; _p->rect.top = 208; }
->>>>>>> left*/
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
 	}
@@ -137,30 +113,27 @@ void boost_func(Player* _p){
 		_p->Timer1 = 0;
 	}
 }
-/*
-<<<<<<< HEAD
-void keyboard_Func(){
-	if (Keyboard::isKeyPressed(Keyboard::Left)){ p.dx = -0.1; }					// Левая стрелка
-	if (Keyboard::isKeyPressed(Keyboard::Right)){ p.dx = 0.1; }					// Правая стрелка
-	if (Keyboard::isKeyPressed(Keyboard::Up)){ 									// Прыжок
-		if (p.onGround){
-			if(!p.mode){ p.dy = -0.5; p.onGround = false; }//sound.play(); } 
-			if(p.mode){ p.dy = -0.7; p.dx +=0.1; p.onGround = false; }//sound.play(); }
-=======*/
+
+
 void keyboard_Func(Player* _p){
-	char client_snd_data[255];
+	char snd_data[255];
 	bool trigger = false;
 	
 	if (Keyboard::isKeyPressed(Keyboard::Left)){ 
 		_p->dx = -0.1; 
 		trigger = true;
 		if(im_client==true && trigger == true){
-			memset(client_snd_data, 0, sizeof(client_snd_data));
-			sprintf(client_snd_data, "%s", "LEFT");
-			if(socket.send(client_snd_data, sizeof(client_snd_data)) != sf::Socket::Done)
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "LEFT");
+			if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
 			{cout<<"client keyboard send: error\n";}
-			//else
-				//cout<<"client keyboard send: success\n";
+			trigger=false;
+		}
+		else if(im_host==true && trigger == true){
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "LEFT");
+			if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+			{cout<<"host keyboard send: error\n";}
 			trigger=false;
 		}
 	}					// Левая стрелка
@@ -169,12 +142,17 @@ void keyboard_Func(Player* _p){
 		_p->dx = 0.1; 
 		trigger=true;
 		if(im_client==true && trigger==true){
-			memset(client_snd_data, 0, sizeof(client_snd_data));
-			sprintf(client_snd_data, "%s", "RIGHT");
-			if(socket.send(client_snd_data, sizeof(client_snd_data)) != sf::Socket::Done)
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "RIGHT");
+			if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
 			{cout<<"client keyboard send: error\n";}
-			//else
-				//cout<<"client keyboard send: success\n";
+			trigger==false;
+		}
+		else if(im_host==true && trigger==true){
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "RIGHT");
+			if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+			{cout<<"host keyboard send: error\n";}
 			trigger==false;
 		}
 	}// Правая стрелка
@@ -183,46 +161,25 @@ void keyboard_Func(Player* _p){
 		if (_p->onGround){
 			if(!_p->mode){ _p->dy = -0.5; _p->onGround = false; }//sound.play(); } 
 			if(_p->mode){ _p->dy = -0.7; _p->dx +=0.1; _p->onGround = false; }//sound.play(); }
+			if(im_client==true && trigger==true){
+				memset(snd_data, 0, sizeof(snd_data));
+				sprintf(snd_data, "%s", "UP");
+				if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+				{cout<<"client keyboard send: error\n";}
+				trigger=false;
+			}
+			else if(im_host==true && trigger==true){
+				memset(snd_data, 0, sizeof(snd_data));
+				sprintf(snd_data, "%s", "UP");
+				if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+				{cout<<"host keyboard send: error\n";}
+				trigger=false;
+			}
 		}
 	}
 
-	/*
-	if(im_host==false && im_client==false)
-		p.update(myTime, true);
-	else if(im_host==true || im_client==true){
-		l.update(myTime, false);
-		p.update(myTime, true);
-	}
-	
-	enemy.update(myTime);*/
+
 }
-
-/*
-void collision_with_enemy_Func(Player* _p){
-	if(_p->rect.intersects(enemy.rect)){
-		if(enemy.life){
-			if(_p->dy>0){ 							// Убил врага прыжком сверху
-				enemy.dx=0; 		// останавливаем врага 
-				_p->dy=-0.2;  		// отпрыгиваем от врага 
-				enemy.life = false; // убиваем
-				scores += 10;		// получ. очки
-			}
-			else{ 									// Умер ГГ 
-				if(_p->mode){ p.mode = false; kill_boost = true;}			// если на бусте, то откл. буст
-				if(!_p->mode){											// если простой ГГ
-					if(kill_boost){ 									// если только после буст
-						kill_boost_timer += myTime;						// то отсчит. 2 сек. чтобы отойти от врага
-						if (kill_boost_timer > 200){ kill_boost = false; }} // и откл. отсчет
-					if(!kill_boost){									// если >2 сек. от буста или простой ГГ
-						health -= 1;									// -1 жизнь
-						_p->rect.left = 16;								// уровень с начала
-					}
-				}	
-			}
->>>>>>> left
-		}
-	}
-}*/
 
 
 void draw_map_Func(){
@@ -262,37 +219,6 @@ void draw_map_Func(){
 		}
 	}
 }
-/*
-<<<<<<< HEAD
-=======
-
-void network_client_Func()
-{
-	//Что нужно передавать клиаенту:
-	//	1) То, что была нажата какая-либо клавиша
-	//	2) То, что был произведен выход из игры(мультиплеера)
-	//Что нужно принимать клиенту (отдельным потоком):
-	//	1) Просчитанные сервером коордиаты его персонажа
-	//	2) Прочитанные сервером координаты персонажа хоста
-	//	3) Выход хоста из игры => конец игры(в мультиплеере) и у клиента
-	
-	
-			//p.rect.left	Это Х координата
-			//p.rect.top	Это Y координата
-			//Разработать механизм по которому удаленный клиент перемещается по карте
-			//keyboard_func
-			//А лучше даже передавать p.dx и p.dy Комп сам все расчитает
-			//
-			//опеределиться (после start_var) с классами для отрисовки персонажей
-		
-	
-	//Дописать то, что прописано в ивенте
-}
-void network_host_Func()
-{
-}
-
->>>>>>> left*/
 
 void game_cycle(){
 	Clock clock;
@@ -325,13 +251,7 @@ void game_cycle(){
 		game_timer = game_timer - playtime;
 
 		event_Func();					// Регистрация событий, управление камерой
-/*<<<<<<< HEAD
-		camera_Func();					// Управление камерой
-		game_over_Func();				// Проверки на конец игры
-		choose_lvl_func();				// Выбор уровня
-		boost_func();					// Большой Марио - [?]
-		keyboard_Func();				// Управление персонажем
-=======*/
+
 		if((im_host==true) || (im_host==false && im_client==false))
 			camera_Func(&p);					// Управление камерой
 		else if(im_client==true && im_host==false)
@@ -359,23 +279,8 @@ void game_cycle(){
 		else if(window.hasFocus() && (im_client==true)){
 			keyboard_Func(&l);
 		}
-		//Если сетевой режим
-		/*if((((int)myTime)%15625)==0)
-			printf("%f\n", playtime);*/
-		//network_client_Func();	// Обработчик клиента
-		//network_host_Func();		// Обработчик сервера
-		//view.setCenter(p.rect.left + 100, p.rect.top); 
 		
-		/*
-		if(im_host==false && im_client==false)	
-			collision_with_enemy_Func(&p);	// Проверка столкновения ГГ и врага
-		else if(im_host==true || im_client==true){
-			collision_with_enemy_Func(&p);
-			collision_with_enemy_Func(&l);
-		}
-		*/
 
-//>>>>>>> left
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 		
 		if(im_host==false && im_client==false)
@@ -385,7 +290,6 @@ void game_cycle(){
 			window.draw(l.sprite);
 		}
 
-//<<<<<<< HEAD
 		for(int i=0; i<5;i++){
 			enemy[i].update(myTime);
 			window.draw(enemy[i].sprite);
@@ -403,12 +307,8 @@ void game_cycle(){
 			l.update(myTime, false);
 			p.update(myTime, true);
 		}
-		//p.update(myTime);
 		window.draw(p.sprite);
 		window.draw(l.sprite);
-/*=======
-		window.draw(enemy.sprite);
->>>>>>> left*/
 		window.draw(text);
 		window.display();
 	}
