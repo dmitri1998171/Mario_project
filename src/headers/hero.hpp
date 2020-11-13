@@ -38,20 +38,30 @@ class Player{
 		bool onGround, mode;
 		Sprite sprite;
 		float CurrentFrame;
+		bool mario_or_luigi;//false==mario, true==luigi
 
-	Player(Texture & image){
+	Player(Texture & image, bool mario_or_luigi){
 		Timer2 = 0;
 		Timer1 = 0;
 		mode = false;
+/*<<<<<<< HEAD
 		sprite.setTexture(image);						// создаем текстуру из ранее загруженного изображения
 		sprite.setTextureRect(IntRect(80,163,16,16));	// выбираем какой участок текстуры нас интересует
 		rect = FloatRect(52,32,16,16);					// создаем объект прямоугольник
+=======*/
+		sprite.setTexture(image);
+		if(mario_or_luigi==true)
+			sprite.setTextureRect(IntRect(80,163,16,16));
+		else
+			sprite.setTextureRect(IntRect(80,144,16,16));
+		rect = FloatRect(52,32,16,16);
+//>>>>>>> left
 
 		dx=dy=0;
 		CurrentFrame = 0;
 	}
 
-	void update(float time){
+	void update(float time, bool mario_or_luigi){
 		rect.left += dx * time;		// Движение по формуле: "скорость, время, растояние"
 		Collision(0);				// Вызов функции рассчета столкновений
 
@@ -67,6 +77,7 @@ class Player{
 		Collision(1);
 
 	// Анимация - смена тайлов
+/*<<<<<<< HEAD
 		CurrentFrame += 0.005 * time;				// Смена кадров анимации также привязана ко времени
 		if (CurrentFrame > 3){ CurrentFrame -=3; }	// Всего 3 кадра анимации ходьбы
 		// Если скорость >0 - меняем нужный участок на текстуре
@@ -75,6 +86,18 @@ class Player{
 		if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,144,-16,16)); }
 		
 		// Постоянная смена позиции (если стоит это движение со скоростью 0 м\с)
+=======*/
+		CurrentFrame += 0.005*time; 
+		if (CurrentFrame > 3){ CurrentFrame -=3; }
+		if(mario_or_luigi==true){
+			if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,144,-16,16)); }
+			if (dx>0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame),144,16,16)); }
+		}
+		else{
+			if (dx<0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame)+16,163,-16,16)); }
+			if (dx>0){ sprite.setTextureRect(IntRect(80+31*int(CurrentFrame),163,16,16)); }
+		}
+//>>>>>>> left
 		sprite.setPosition(rect.left - offsetX,rect.top - offsetY);
 		dx=0;
 	}
@@ -121,6 +144,8 @@ class Player{
 		}
 	}
 };
+
+
 
 class Enemy{
 	public:
