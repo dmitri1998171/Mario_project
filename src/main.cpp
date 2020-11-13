@@ -1,5 +1,10 @@
 #include "headers/menu.hpp"
 
+/*
+	В данный файл подключается только menu.hpp так как все остальные 
+	заголовочные файлы подключены друг к другу конвеером(последовательно)
+*/ 
+
 void load_Resouces(){
 // Загрузка шрифта
 	font.loadFromFile("font/SourceCodePro-Regular.ttf");
@@ -12,15 +17,18 @@ void load_Resouces(){
 	
 // Загрузка аудио
 	buffer.loadFromFile("Audio/Jump.ogg");
-	Sound sound(buffer);
 	sound.setVolume(10);
 
 	music.openFromFile("Audio/Mario_Theme.ogg");
 	music.setVolume(10);
+	
+	// Вкл. фоновую музыку
+	music.play();
+	music.setLoop(true);
 }
 
 int main(){
-	load_Resouces();	// Загрузка ресурсов
+	load_Resouces();			// Загрузка ресурсов
 		
 	menu();						// Меню
 	pause_Func();				// Пауза
@@ -37,9 +45,3 @@ game_state == 3 - проиграл
 game_state == 4 - выйграл
 */ 
 
-// TO DO
-/*
-	8) Правильная коллизия большого Марио
-	10) личные блоки (1,2)
-	11) зациклить музыку
-*/ 

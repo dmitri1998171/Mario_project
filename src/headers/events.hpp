@@ -27,13 +27,36 @@ void play_game_script(){
     scores = 0;
     playtime = 0;
     game_cycle(); }
-// ... кнопка meltiplayer в главном меню - меняет игровое состояние меню и вызывает ф-ию отрисовки интерфейса
-void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
-// ... кнопка quit - используется в главном меню, меню проигрыша\выигрыша
-void quit_script(){ printf("Quit\n"); exit(0); }
+
+void multiplayer_script(){ 
+	printf("Multiplayer\n"); 
+	menu_state = 1; 
+	multiplayer_menu_Func(); 
+}
+
+// скрипт выхода из игры
+// включает в себя проверку отправки команды на выход от клиента к хосту и обратно 
+void quit_script(){ 
+	printf("Quit\n");
+	if(im_host==true){
+		char client_quit_snd[255];
+		sprintf(client_quit_snd, "%s", "QUIT");
+		if(client.send(client_quit_snd, sizeof(client_quit_snd)) != sf::Socket::Done){
+			cout<<"host quit send: error\n";}
+		socket.disconnect();
+	}
+	else if(im_client==true){
+		char client_quit_snd[255];
+		sprintf(client_quit_snd, "%s", "QUIT");
+		if(socket.send(client_quit_snd, sizeof(client_quit_snd)) != sf::Socket::Done){
+			cout<<"client quit send: error\n";}
+		client.disconnect();
+	}
+	
+	exit(EXIT_SUCCESS); 
+}
 
 // --------------------------------------------
-
 // ... кнопка continue в меню паузы
 void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }
 // ... кнопка Main menu в меню паузы
@@ -46,7 +69,6 @@ void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
 // получает функции как аргументы и вызывает их в зависимости от координат курсора в момент нажатия на ЛКМ
 void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_script)()){
 	Vector2i mousePosition = Mouse::getPosition(window);
-	// printf("\tX: %i\tY: %i\n", mousePosition.x, mousePosition.y);
 	
     if(mousePosition.x > 123 && mousePosition.x < 265){
         if(mousePosition.y > 133 && mousePosition.y < 156){

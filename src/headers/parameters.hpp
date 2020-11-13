@@ -24,7 +24,8 @@ Font font;                                  // шрифт
 Text text("", font, 20);                    // текст
 Event event;                                // обработчик событий
 SoundBuffer buffer;                         // буфер звука
-Music music;                                // буфер фоновой мелодии 
+Sound sound(buffer);                        // Обработка звука
+Music music;                                // Обработка фоновой мелодии 
 
 // Встроенные сетевые типы данных 
 TcpSocket socket;                           // server 

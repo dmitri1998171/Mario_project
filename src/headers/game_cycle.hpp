@@ -2,22 +2,23 @@
 
 void hud_game_over_Func();
 void game_finished_Func();
-// // Объявляем классы героя, врагов
-// Player p(tileset);
-// Enemy enemy[5];
 
+// Проверки находится ли ГГ в начале или конце карты, если да то увелич. смещение (offsetX) и 
+// ГГ доходит до края окна
 void camera_Func(Player* _p){
 // Управление камерой
 	if(_p->rect.left < 200){ offsetX = 0; }									// При загрузке уровня
 	if(_p->rect.left > 200){ offsetX = _p->rect.left - 200; }					// Фикс. камеры в начале карты
 }
 
+// Проверки на смерть ГГ
 void game_over_Func(Player* _p){
 	if(health == 0){ game_state = 3; hud_game_over_Func(); }					// Кол-во оставшихся попыток
 	if(_p->rect.top > 250){ health -=1; _p->rect.left = 16; _p->rect.top = 208; }		// -1 жизнь если упал в яму
 	if(game_timer == 0){ health -=1; _p->rect.left = 16; _p->rect.top = 208; }		// -1 жизнь если время вышло 
 }
 
+// Проверки на столкновения ГГ и врага
 void collision_with_enemy_Func(int k, Player* _p){
 	if(_p->rect.intersects(enemy[k].rect)){
 		if(enemy[k].life){
@@ -43,17 +44,35 @@ void collision_with_enemy_Func(int k, Player* _p){
 		}
 	}
 }
+
+// Генератор монеток в рандомных местах на карте в lvl3
+void monets_generator(){
+	srand(time(0));
+	local_timer = 0;
+	for(int i=1; i<H-1; i++){
+		for(int j=1; j<26-1; j++){
+			if(local_timer == 200){
+				local_timer = 0;
+				if(TileMap[i][j] == ' '){
+					gen_trigger = 0 + rand() % 2;
+					if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
+				}
+			}
+			local_timer += myTime;
+		}
+	}
+}
+
+// Система выбора и перехода между уровнями
 void choose_lvl_func(Player* _p){
 	if(lvl == 1){ 
-		if(_p->rect.left > 2180){ offsetX = W_window+1800 - 200; }			// Фикс. камеры в конце
-		if(_p->rect.left > 2233){ lvl += 0.5; _p->rect.left = 16; }
-
-		window.clear(Color(107,140,255));
-		memcpy(TileMap, TileMap1, sizeof(TileMap1));
+		if(_p->rect.left > 2180){ offsetX = W_window+1800 - 200; }	// Фикс. камеры в конце
+		if(_p->rect.left > 2233){ lvl += 0.5; _p->rect.left = 16; }	// Если дошел до коорд. 2233 - переход на след. ур-нь
+		window.clear(Color(107,140,255));							// Цвет неба
+		memcpy(TileMap, TileMap1, sizeof(TileMap1));				// Копируем одну из карт в рабочий массив
 	}
 	if(lvl == 1.5){ 
-		offsetX = 0;
-
+		offsetX = 0;			// жестко фиксирует камеру
 		if(_p->rect.left > 287){ 
 			if(_p->rect.top > 207){ 
 				lvl += 0.5;
@@ -61,7 +80,6 @@ void choose_lvl_func(Player* _p){
 				for(int i=0; i<5; i++){ enemy[i].life = true; }
 			}
 		}
-
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap1_5, sizeof(TileMap1_5));
 	}
@@ -83,85 +101,109 @@ void choose_lvl_func(Player* _p){
 		memcpy(TileMap, TileMap2_5, sizeof(TileMap2_5));
 	}
 	if(lvl == 3){
-		srand(time(0));
 		offsetX = 0;
 		if(scores == local_scores+100){ lvl += 0.5; }
 		window.clear(Color(107,140,255));
 		memcpy(TileMap, TileMap3, sizeof(TileMap3));
-		local_timer = 0;
-		for(int i=1; i<H-1; i++){
-			for(int j=1; j<26-1; j++){
-				if(local_timer == 200){
-					local_timer = 0;
-					if(TileMap[i][j] == ' '){
-						gen_trigger = 0 + rand() % 2;
-						if(gen_trigger == 1){ TileMap[i][j] = 'i'; }
-					}
-				}
-				local_timer += myTime;
-			}
-		}
+		monets_generator();
 	}
 	if(lvl > 3){ game_state = 4; game_finished_Func(); }
 }
 
+// Буст ГГ(Большой Марио)
 void boost_func(Player* _p){
+	// Если буст вкл.
 	if (_p->mode){
-		// printf("boost_time: %d\n", p.Timer1);
+		// отсчитываем таймер 15 сек и выкл. буст
 		_p->Timer1 += myTime;
 		if (_p->Timer1>1500){
 			_p->mode = false;
 		}
 	}
+	// Если выкл. буст - возвращаем норм. размеры ГГ и
+	// обнуляем таймер
 	if(!_p->mode){
 		_p->sprite.setScale(1,1);
 		_p->sprite.setOrigin(0,0);
 		_p->Timer1 = 0;
 	}
-} 
+}
 
+// Обработка нажатий клавиш для перемещения ГГ
 void keyboard_Func(Player* _p){
-	char client_snd_data[255];
+	char snd_data[255];
 	bool trigger = false;
 	
+	// Левая стрелка
 	if (Keyboard::isKeyPressed(Keyboard::Left)){ 
-		_p->dx = -0.1; 
-		trigger = true;
+		_p->dx = -0.1; // Меняем скорость (-0.1 движение влево; +0.1 движение вправо)
+		trigger = true; // Ограничиваем кол-во обработанных событий
+		
+		// Отправка команд на сервер
 		if(im_client==true && trigger == true){
-			memset(client_snd_data, 0, sizeof(client_snd_data));
-			sprintf(client_snd_data, "%s", "LEFT");
-			if(socket.send(client_snd_data, sizeof(client_snd_data)) != sf::Socket::Done)
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "LEFT");
+			if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
 			{cout<<"client keyboard send: error\n";}
-			//else
-				//cout<<"client keyboard send: success\n";
 			trigger=false;
 		}
-	}					// Левая стрелка
+		// Отправка команд от сервера
+		else if(im_host==true && trigger == true){
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "LEFT");
+			if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+			{cout<<"host keyboard send: error\n";}
+			trigger=false;
+		}
+	}					
 	
+	// Правая стрелка
 	if (Keyboard::isKeyPressed(Keyboard::Right)){ 
 		_p->dx = 0.1; 
 		trigger=true;
 		if(im_client==true && trigger==true){
-			memset(client_snd_data, 0, sizeof(client_snd_data));
-			sprintf(client_snd_data, "%s", "RIGHT");
-			if(socket.send(client_snd_data, sizeof(client_snd_data)) != sf::Socket::Done)
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "RIGHT");
+			if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
 			{cout<<"client keyboard send: error\n";}
-			//else
-				//cout<<"client keyboard send: success\n";
 			trigger==false;
 		}
-	}// Правая стрелка
-	
-	if (Keyboard::isKeyPressed(Keyboard::Up)){														// Прыжок
-		if (_p->onGround){
-			if(!_p->mode){ _p->dy = -0.5; _p->onGround = false; }//sound.play(); } 
-			if(_p->mode){ _p->dy = -0.7; _p->dx +=0.1; _p->onGround = false; }//sound.play(); }
+		else if(im_host==true && trigger==true){
+			memset(snd_data, 0, sizeof(snd_data));
+			sprintf(snd_data, "%s", "RIGHT");
+			if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+			{cout<<"host keyboard send: error\n";}
+			trigger==false;
 		}
 	}
-
 	
+	// стрелка вверх - Прыжок
+	if (Keyboard::isKeyPressed(Keyboard::Up)){														
+		if (_p->onGround){		// Если на земле
+			// ... не буст, то прыжок на 0.5 и издаем звук прыжка
+			if(!_p->mode){ _p->dy = -0.5; _p->onGround = false; sound.play(); } 
+			//  ... буст, прыжок на 0.7, скорость бега больше, звук прыжка
+			if(_p->mode){ _p->dy = -0.7; _p->dx +=0.1; _p->onGround = false; sound.play(); }
+
+			if(im_client==true && trigger==true){
+				memset(snd_data, 0, sizeof(snd_data));
+				sprintf(snd_data, "%s", "UP");
+				if(socket.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+				{cout<<"client keyboard send: error\n";}
+				trigger=false;
+			}
+			else if(im_host==true && trigger==true){
+				memset(snd_data, 0, sizeof(snd_data));
+				sprintf(snd_data, "%s", "UP");
+				if(client.send(snd_data, sizeof(snd_data)) != sf::Socket::Done)
+				{cout<<"host keyboard send: error\n";}
+				trigger=false;
+			}
+		}
+	}
 }
 
+// Отрисока карты
 void draw_map_Func(){
 	for (int i=0; i<H; i++){
 		for (int j=0; j<W; j++){
@@ -200,32 +242,7 @@ void draw_map_Func(){
 	}
 }
 
-void network_client_Func()
-{
-	//Что нужно передавать клиаенту:
-	//	1) То, что была нажата какая-либо клавиша
-	//	2) То, что был произведен выход из игры(мультиплеера)
-	//Что нужно принимать клиенту (отдельным потоком):
-	//	1) Просчитанные сервером коордиаты его персонажа
-	//	2) Прочитанные сервером координаты персонажа хоста
-	//	3) Выход хоста из игры => конец игры(в мультиплеере) и у клиента
-	
-	
-			//p.rect.left	Это Х координата
-			//p.rect.top	Это Y координата
-			//Разработать механизм по которому удаленный клиент перемещается по карте
-			//keyboard_func
-			//А лучше даже передавать p.dx и p.dy Комп сам все расчитает
-			//
-			//опеределиться (после start_var) с классами для отрисовки персонажей
-		
-	
-	//Дописать то, что прописано в ивенте
-}
-void network_host_Func()
-{
-}
-
+// ОСНОВНОЙ ИГРОВОЙ ЦИКЛ
 void game_cycle(){
 	Clock clock;
 	
@@ -242,7 +259,6 @@ void game_cycle(){
 	enemy[4].set(tileset,48*19,208); 
 
 	while(game_state == 1){
-	// music.play();
 	// вывод индикаторов очков, жизней, времени на экран
 		hud_game_Func();
 		
@@ -258,39 +274,31 @@ void game_cycle(){
 
 		event_Func();					// Регистрация событий, управление камерой
 
-		// camera_Func();					// Управление камерой
-		// game_over_Func();				// Проверки на конец игры
-		// choose_lvl_func();				// Выбор уровня
-		// boost_func();					// Большой Марио - [?]
-		// keyboard_Func();				// Управление персонажем
-
-		if((im_host==true) || (im_host==false && im_client==false))
-			camera_Func(&p);					// Управление камерой
-		else if(im_client==true && im_host==false)
-			camera_Func(&l);
+		if((im_host==true) || (im_host==false && im_client==false)){
+			camera_Func(&p); }					// Управление камерой
+		else if(im_client==true && im_host==false){
+			camera_Func(&l); }
 		
 		if(im_host==true || (im_host==false && im_client==false)){
-			game_over_Func(&p);				// Проверки на конец игры
-		}
-		else if(im_host==false && im_client==true){
-			game_over_Func(&l);
-		}
-
-		if(im_host==true || (im_host==false && im_client==false))
-			choose_lvl_func(&p);				// Выбор уровня
-		else
-			choose_lvl_func(&l);
+			game_over_Func(&p); }				// Проверки на конец игры
 		
-		if(im_host==true || (im_host==false && im_client==false))
-			boost_func(&p);						// Большой Марио - [?]
-		else if(im_host==true || im_client==true)
-			boost_func(&l);
+		else if(im_host==false && im_client==true){
+			game_over_Func(&l); }
 
-		if(window.hasFocus() && ((im_host==true) || (im_host==false && im_client==false)))
-			keyboard_Func(&p);				// Управление персонажем
+		if(im_host==true || (im_host==false && im_client==false)){
+			choose_lvl_func(&p); }				// Выбор уровня
+		else{ choose_lvl_func(&l);}
+		
+		if(im_host==true || (im_host==false && im_client==false)){
+			boost_func(&p); }						// Большой Марио - [?]
+		else if(im_host==true || im_client==true){
+			boost_func(&l); }
+
+		if(window.hasFocus() && ((im_host==true) || (im_host==false && im_client==false))){
+			keyboard_Func(&p); }				// Управление персонажем
 		else if(window.hasFocus() && (im_client==true)){
-			keyboard_Func(&l);
-		}
+			keyboard_Func(&l); }
+
 		draw_map_Func();				// ОТРИСОВКА КАРТЫ
 		
 		if(im_host==false && im_client==false)
@@ -300,6 +308,7 @@ void game_cycle(){
 			window.draw(l.sprite);
 		}
 
+		// Отрисовка врагов
 		for(int i=0; i<5;i++){
 			enemy[i].update(myTime);
 			window.draw(enemy[i].sprite);
@@ -311,15 +320,15 @@ void game_cycle(){
 			}
 		}
 	
+		// Отрисовка Главного Героя(ГГ)
 		if(im_host==false && im_client==false)
 			p.update(myTime, true);
 		else if(im_host==true || im_client==true){
 			l.update(myTime, false);
 			p.update(myTime, true);
 		}
-		//p.update(myTime);
+
 		window.draw(p.sprite);
-		window.draw(l.sprite);
 		window.draw(text);
 		window.display();
 	}
