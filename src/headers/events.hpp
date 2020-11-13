@@ -27,8 +27,33 @@ void play_game_script(){
     playtime = 0;
     game_cycle(); }
 
-void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
-void quit_script(){ printf("Quit\n"); exit(0); }
+void multiplayer_script(){ 
+	printf("Multiplayer\n"); 
+	menu_state = 1; 
+	multiplayer_menu_Func(); 
+}
+
+void quit_script(){ 
+	printf("Quit\n");
+	if(im_host==true){
+		char client_quit_snd[255];
+		sprintf(client_quit_snd, "%s", "QUIT");
+		if(client.send(client_quit_snd, sizeof(client_quit_snd)) != sf::Socket::Done){
+			cout<<"host quit send: error\n";}
+		socket.disconnect();
+	}
+	else if(im_client==true){
+		char client_quit_snd[255];
+		sprintf(client_quit_snd, "%s", "QUIT");
+		if(socket.send(client_quit_snd, sizeof(client_quit_snd)) != sf::Socket::Done){
+			cout<<"client quit send: error\n";}
+		client.disconnect();
+	}
+	
+	//if(im_host==true){im_host=false; im_client=false; socket.disconnect(); client.disconnect();}
+	//else if(im_client==true){im_client=false; im_host=false; client.disconnect(); socket.disconnect();}
+	exit(EXIT_SUCCESS); 
+}
 
 
 void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
