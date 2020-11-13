@@ -16,8 +16,9 @@ void client_keyboard_send_Func();
 void client_keyboard_receive_Func();
 
 
-// --------------------------------------------
-
+// ============================================================
+// скрипт если нажатие было на кнопку play game в главном меню
+// обнуляет переменные
 void play_game_script(){ 
     printf("play game\n"); 
     game_state = 1; 
@@ -26,18 +27,23 @@ void play_game_script(){
     scores = 0;
     playtime = 0;
     game_cycle(); }
-
+// ... кнопка meltiplayer в главном меню - меняет игровое состояние меню и вызывает ф-ию отрисовки интерфейса
 void multiplayer_script(){ printf("Multiplayer\n"); menu_state = 1; multiplayer_menu_Func(); }
+// ... кнопка quit - используется в главном меню, меню проигрыша\выигрыша
 void quit_script(){ printf("Quit\n"); exit(0); }
-
-
-void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
-
-void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }
-void menu_script(){ printf("Main menu\n"); game_state = 0; menu_state = 0; menu(); }
 
 // --------------------------------------------
 
+// ... кнопка continue в меню паузы
+void continue_script(){ printf("Continue\n"); game_state = 1; game_cycle(); }
+// ... кнопка Main menu в меню паузы
+void menu_script(){ printf("Main menu\n"); game_state = 0; menu_state = 0; menu(); }
+// ... кнопка back в меню паузы
+void back_script(){ printf("Back\n"); menu_state = 0; menu(); }
+// ============================================================
+
+// Униферсальная функция для определения рабочей зоны кнопок в меню
+// получает функции как аргументы и вызывает их в зависимости от координат курсора в момент нажатия на ЛКМ
 void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_script)()){
 	Vector2i mousePosition = Mouse::getPosition(window);
 	// printf("\tX: %i\tY: %i\n", mousePosition.x, mousePosition.y);
@@ -56,27 +62,30 @@ void Click_Func(void(*first_script)(), void(*second_script)(), void(*third_scrip
     
 }
 
+// Обработка событий, постоянно ведет опрос соответствующих объектов(Mouse, Keyboard) на наличие изменений
 void event_Func(){
-// Обработка событий
 	while(window.pollEvent(event)){
 		if(event.type == Event::Closed) { exit(0); }  
 		
+    // Нажатия левой кнопки мыши в меню
 		if(event.type == Event::MouseButtonReleased &&
         	event.mouseButton.button == Mouse::Left){
-			if(game_state == 0 || game_state == 2){
-				if(menu_state == 0){
-					Click_Func(play_game_script, multiplayer_script, quit_script); }
-				if(menu_state == 1){
-					Click_Func(host_script, client_script, back_script); }
-				if(menu_state == 2){
-					Click_Func(continue_script,menu_script,quit_script); }
+			if(game_state == 0 ){       // Если меню
+        if(menu_state == 0){      // ... Главное меню
+          Click_Func(play_game_script, multiplayer_script, quit_script); }
+        if(menu_state == 1){      // ... multiplayer меню
+          Click_Func(host_script, client_script, back_script); }
+        if(menu_state == 2){      // ... меню паузы
+          Click_Func(continue_script,menu_script,quit_script); }
 			}
-      if(game_state == 3){ 
+      if(game_state == 3){        // Если проиграл
         Click_Func(play_game_script, quit_script, quit_script); }
-      if(game_state == 4){ 
+      if(game_state == 4){        // Если выиграл
         Click_Func(play_game_script, quit_script, quit_script); }
         }
 	
+    // ... кнопка Escape
+    // В зависимости от того, где была нажата кнопка, действие будет разным
 		if(event.type == Event::KeyReleased &&
         event.key.code == Keyboard::Escape){
 			if(game_state == 1){                        // Пауза
@@ -84,23 +93,29 @@ void event_Func(){
 				game_state = 0; 
 				menu_state = 2; 
 				pause_Func(); }		
-			if(game_state == 0 || 
-          game_state == 3 || 
-          game_state == 4){
+			if(game_state == 0 ||                       // меню, проиграл, выиграл
+         game_state == 3 || 
+         game_state == 4){
           if(menu_state == 2){ game_state = 1; start_var = false; game_cycle(); } // Продолжить
-          else exit(0); }         				// Выход из игры		
+          else exit(0); }         				        // Выход из игры		
 		}
 
 
     // изменение размера окна
+    // shortcut ctrl+F
     if(Keyboard::isKeyPressed(Keyboard::LControl)){
       if(event.type == Event::KeyReleased &&
         event.key.code == Keyboard::F){
+        
+        // получаем размеры монитора 
         W_desktop = VideoMode::getDesktopMode().width;
         H_desktop = VideoMode::getDesktopMode().height;
 
+        // 1-ое нажатие ctrl+F - размеры окна 640х480
         if(win_size_check == 1){ window.setSize(Vector2u(640, 480)); }
+        // 2-ое нажатие ctrl+F - размеры окна = размерам монитора
         if(win_size_check == 2){ window.setSize(Vector2u(W_desktop, H_desktop)); }
+        // 3-ое нажатие ctrl+F - размеры окна обнуляются до стандартных
         if(win_size_check == 3){ win_size_check = 0; window.setSize(Vector2u(W_window, H_window));}
         window.display();
         win_size_check++;

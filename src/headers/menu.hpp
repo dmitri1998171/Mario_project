@@ -12,15 +12,85 @@ void multiplayer_menu_Func();
 
 // ======================================================================
 
+// Основное меню
+void menu(){
+    if(game_state == 0){   
+        if(menu_state == 0){
+            // Задаем фон. изображение
+            bg_sprite.setTexture(bg_tex);
+            bg_sprite.setScale(1.25, 1.6);
+
+            // Создаем объект типа "прямоугольник" 
+            RectangleShape play_game_button(Vector2f(W_window/3+10, H_window/10));
+            play_game_button.setFillColor(Color(0,255,0, 200));         // Цвет
+            play_game_button.setPosition(W_window/3-10, H_window/2+5);  // Позиция
+            play_game_button.setOrigin(0.5, 0);                         // Положение осей
+
+            RectangleShape multiplayer_button(Vector2f(W_window/3+40, H_window/10));
+            multiplayer_button.setFillColor(Color(255,255,0, 200));
+            multiplayer_button.setPosition(W_window/3-25, H_window/2+50);
+            multiplayer_button.setOrigin(0.5, 0);
+
+            RectangleShape quit_button(Vector2f(W_window/5, H_window/10));
+            quit_button.setFillColor(Color(255,0,0, 200));
+            quit_button.setPosition(W_window/2, H_window/2+107);
+            quit_button.setOrigin(W_window/10, W_window/20);
+
+// ----------------------------------------------------------------------
+
+            // Создаем текст, font - шрифт, 24 - размер букв
+            Text play_game("Play game", font, 24);
+            play_game.setPosition(W_window/2, H_window/2+20);
+            play_game.setOrigin(W_window/5.5, W_window/20);
+            play_game.setFillColor(Color::White);
+            play_game.setStyle(Text::Bold); // Модификаторы текста(жирный, курсив, подчеркнутый, перечеркнутый и тд)
+
+            Text multiplayer_text("Multiplayer", font, 24);
+            multiplayer_text.setPosition(W_window/2, H_window/2+65);
+            multiplayer_text.setOrigin(W_window/4.5, W_window/20);
+            multiplayer_text.setFillColor(Color::White);
+            multiplayer_text.setStyle(Text::Bold);
+
+            Text quit("Quit", font, 24);
+            quit.setPosition(W_window/2, H_window/2+105);
+            quit.setOrigin(W_window/12, W_window/20);
+            quit.setFillColor(Color::White);
+            quit.setStyle(Text::Bold);
+
+            while(1){
+                event_Func();   // Вызов обработчика событий
+
+                window.clear(); // Очистка экрана
+                window.draw(bg_sprite); // Рисуем фон. изображение
+
+                // Отрисовываем кнопки
+                window.draw(play_game_button);
+                window.draw(multiplayer_button);
+                window.draw(quit_button);
+                
+                // ... текст на кнопках
+                window.draw(multiplayer_text);
+                window.draw(play_game);
+                window.draw(quit);
+                
+                // обновляем экран
+                window.display();
+            }
+        }
+        if(menu_state == 1){ multiplayer_menu_Func(); }
+    }
+}
+
+// подменю multiplayer
 void multiplayer_menu_Func(){
     if(menu_state == 1){
         bg_sprite.setTexture(bg_tex);
         bg_sprite.setScale(1.25, 1.6);
 
         RectangleShape host_button(Vector2f(W_window/3+10, H_window/10));
-        host_button.setFillColor(Color(0,255,0, 200));
-        host_button.setPosition(W_window/3-10, H_window/2+5);
-        host_button.setOrigin(0.5, 0);
+        host_button.setFillColor(Color(0,255,0, 200));              
+        host_button.setPosition(W_window/3-10, H_window/2+5);       
+        host_button.setOrigin(0.5, 0);                              
 
         RectangleShape client_button(Vector2f(W_window/3+40, H_window/10));
         client_button.setFillColor(Color(255,255,0, 200));
@@ -38,7 +108,7 @@ void multiplayer_menu_Func(){
         host_text.setPosition(W_window/2, H_window/2+20);
         host_text.setOrigin(W_window/5.5, W_window/20);
         host_text.setFillColor(Color::White);
-        host_text.setStyle(Text::Bold);
+        host_text.setStyle(Text::Bold);  
 
         Text client_text("I'm Client", font, 24);
         client_text.setPosition(W_window/2, H_window/2+65);
@@ -53,86 +123,25 @@ void multiplayer_menu_Func(){
         back.setStyle(Text::Bold);
 
         while(1){
-            event_Func();
+            event_Func();               
             
-            window.clear();
-            window.draw(bg_sprite);
-
-            window.draw(host_button);
+            window.clear();             
+            window.draw(bg_sprite);     
+             
+            window.draw(host_button);   
             window.draw(client_button);
             window.draw(back_button);
-            
+                          
             window.draw(host_text);
             window.draw(client_text);
             window.draw(back);
-            
+                             
             window.display();
         }
     }
 }
 
-void menu(){
-    if(game_state == 0){   
-        if(menu_state == 0){
-            bg_sprite.setTexture(bg_tex);
-            bg_sprite.setScale(1.25, 1.6);
-
-            RectangleShape play_game_button(Vector2f(W_window/3+10, H_window/10));
-            play_game_button.setFillColor(Color(0,255,0, 200));
-            play_game_button.setPosition(W_window/3-10, H_window/2+5);
-            play_game_button.setOrigin(0.5, 0);
-
-            RectangleShape multiplayer_button(Vector2f(W_window/3+40, H_window/10));
-            multiplayer_button.setFillColor(Color(255,255,0, 200));
-            multiplayer_button.setPosition(W_window/3-25, H_window/2+50);
-            multiplayer_button.setOrigin(0.5, 0);
-
-            RectangleShape quit_button(Vector2f(W_window/5, H_window/10));
-            quit_button.setFillColor(Color(255,0,0, 200));
-            quit_button.setPosition(W_window/2, H_window/2+107);
-            quit_button.setOrigin(W_window/10, W_window/20);
-
-// ----------------------------------------------------------------------
-
-            Text play_game("Play game", font, 24);
-            play_game.setPosition(W_window/2, H_window/2+20);
-            play_game.setOrigin(W_window/5.5, W_window/20);
-            play_game.setFillColor(Color::White);
-            play_game.setStyle(Text::Bold);
-
-            Text multiplayer_text("Multiplayer", font, 24);
-            multiplayer_text.setPosition(W_window/2, H_window/2+65);
-            multiplayer_text.setOrigin(W_window/4.5, W_window/20);
-            multiplayer_text.setFillColor(Color::White);
-            multiplayer_text.setStyle(Text::Bold);
-
-            Text quit("Quit", font, 24);
-            quit.setPosition(W_window/2, H_window/2+105);
-            quit.setOrigin(W_window/12, W_window/20);
-            quit.setFillColor(Color::White);
-            quit.setStyle(Text::Bold);
-
-            while(1){
-                event_Func();
-
-                window.clear();
-                window.draw(bg_sprite);
-
-                window.draw(play_game_button);
-                window.draw(multiplayer_button);
-                window.draw(quit_button);
-                
-                window.draw(multiplayer_text);
-                window.draw(play_game);
-                window.draw(quit);
-                
-                window.display();
-            }
-        }
-        if(menu_state == 1){ multiplayer_menu_Func(); }
-    }
-}
-
+// меню паузы
 void pause_Func(){
     if(game_state == 0){
         if(menu_state == 2){
@@ -202,6 +211,7 @@ void pause_Func(){
 
 // ======================================================================
 
+// меню проигрыша
 void hud_game_over_Func(){
     if(game_state == 3){
         RectangleShape g_o_bg(Vector2f(W_window, H_window));
@@ -237,6 +247,7 @@ void hud_game_over_Func(){
     }
 }
 
+// меню выигрыша
 void game_finished_Func(){
     if(game_state == 4){
         RectangleShape g_c_bg(Vector2f(W_window, H_window));
