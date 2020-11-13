@@ -9,10 +9,7 @@ void load_Resouces(){
 	s_map.setTexture(tileset);
 
 	bg_tex.loadFromFile("Images/background.png");
-
-	enemy.set(tileset,48*16,208);
-	view.reset(FloatRect(0, 0, W_window, H_window));
-
+	
 // Загрузка аудио
 	buffer.loadFromFile("Audio/Jump.ogg");
 	Sound sound(buffer);
@@ -24,9 +21,7 @@ void load_Resouces(){
 
 int main(){
 	load_Resouces();	// Загрузка ресурсов
-	// printf("game_state: %i\n", game_state);
-	
-	
+		
 	menu();						// Меню
 	pause_Func();				// Пауза
 	game_cycle();				// Игра
@@ -47,7 +42,4 @@ game_state == 4 - выйграл
 	8) Правильная коллизия большого Марио
 	10) личные блоки (1,2)
 	11) зациклить музыку
-	\/ 12) обраб монеток
-	13) генератор в lvl3
-	14) неск. врагов
 */ 

@@ -9,7 +9,7 @@
 
 const int H = 17, W = 150;          // Размеры карты
 float offsetX = 0, offsetY = 0;     // Смещение для камеры
-float lvl = 1;                    // Текущий уровень
+float lvl = 1;                      // Текущий уровень
 
 using namespace std;
 using namespace sf;
@@ -20,14 +20,14 @@ String TileMap1[H] = {
 "000000000000000000000000000000000000000000000000000000000000000000000  0000000000000000000000000000000000000000000000000000000000000000000000000000000",
 "0                                                                          w  i                                                                      0",
 "0                                                                           i i i    w                                                   w           0",
-"0         w                                  w                      k      kkkkkkk                                                                   0",
-"0                            w                                      k                                            w                                   0",
-"0                                                                   k   r                                                                            0",
-"0                                                                   k0                         w                                                     0",
-"0                                                                   k                                                                                0",
-"0                                                    ii             k                                   r                                U           0",
-"0             i                                t0                   k                                    r                                           0",
-"0            i i                               00                   kii                            r      r                                          0",
+"0         w                                  w                      k      kkkkkkk                                    i     i                        0",
+"0                            w                                      k                                            w    iii  ii                        0",
+"0                                                                   k   r                                               i  i                         0",
+"0                                                                   k0                         w                            i                        0",
+"0                                                                   k                                                PPPP PPPPi                      0",
+"0                                                    ii             k                                   r           Pi  iPi  iP          U           0",
+"0             i                                t0                   k                                    r           P  PPP  P                       0",
+"0            i i                               00                   kii                            r      r      0                                   0",
 "0           i   i                              00   kkck          kkkkkk                         rir       r                                         0",
 "0           i   i              t0              T0   ii                                         r rirrr      r                                        0",
 "0        i            g        00              T0                d                           r r riri        r       d     g                         0",
@@ -72,7 +72,7 @@ String TileMap2[H] = {
 "0                          iiii         2  2  2  2                   RRiR               K KKKKKR         K   KKKKKKK   KpRKKK                     T0KK",
 "0          KcKcK        K iKKKKi K                                  RRiiR               K               KKK  KKKpppppppppp                        T0KK",
 "0                       KKKK  KKKK                                 RRRiRR               K               KKKKKKpKrrppprp                        q  T0KK",
-"0                                                                 RRRRi 1                              KKKKKKKKKKKKKKKKKKKKK                      T0KK",
+"0                                      p                          RRRRi 1                              KKKKKKKKKKKKKKKKKKKKK                      T0KK",
 "pppppppppppppppppppppppppppppppppppppppp  1  1  1  ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
 "pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
 "pppppppppppppppppppppppppppppppppppppppp           ppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppppp",
